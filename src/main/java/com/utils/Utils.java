@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 
 public class Utils {
@@ -30,9 +31,21 @@ public class Utils {
     BufferedReader reader = request.getReader();
     String line = reader.readLine();
     while (line != null) {
-      stringBuilder.append(line);
+      stringBuilder.append(line + ",");
       line = reader.readLine();
     }
     return stringBuilder.toString();
+  }
+
+  public static HashMap<String, Object> extractElement(HttpServletRequest request)
+      throws IOException {
+    HashMap<String, Object> map = new HashMap<String, Object>();
+    String body = getBody(request);
+    String[] elements = body.split(",");
+    for (String element : elements) {
+      String[] pair = element.split("=");
+      map.put(pair[0].trim(), pair[1].trim());
+    }
+    return map;
   }
 }

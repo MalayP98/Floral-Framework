@@ -9,10 +9,12 @@ public class UserDao {
 
   public String getUsernameFromPassword(Connection connection, String password)
       throws SQLException {
-    String query = "select username from users where password='" + password + "'";
+    String query = "select username from users where password='" + password + "';";
     Statement statement = connection.createStatement();
     ResultSet resultSet = statement.executeQuery(query);
-    return resultSet.getString("username");
+    if (resultSet.next()) {
+      return resultSet.getString("username");
+    }
+    return null;
   }
-
 }
