@@ -2,12 +2,12 @@ package com.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.util.Date;
+import java.sql.SQLException;
 import java.util.HashMap;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 import com.dao.UserDao;
 import com.utils.Constants;
@@ -17,29 +17,25 @@ public class LoginServlet extends HttpServlet {
 
   UserDao userDao = new UserDao();
 
-  public HashMap<String, Object> getJsonResponse(String status, String message) {
-    HashMap<String, Object> response = new HashMap<String, Object>();
-    response.put(Constants.STATUS, status);
-    response.put(Constants.MESSAGE, message);
-    response.put(Constants.TIMESTAMP, new Date());
-    return response;
-  }
-
-  public JSONObject login(HttpServletRequest request, Connection connection) throws IOException {
+  public JSONObject login(HttpServletRequest request, HttpSession session)
+      throws IOException, SQLException {
     HashMap<String, Object> map = Utils.extractData(request);
     HashMap<String, Object> response = new HashMap<String, Object>();
     String username = (String) map.get("name");
     String password = (String) map.get("password");
     String dbUsername = "";
     try {
-      dbUsername = userDao.getUsernameFromPassword(connection, password);
+      dbUsername = userDao.getUsernameFromPassword(password);
     } catch (Exception e) {
-      response = getJsonResponse(Constants.FAILED, "No such user.");
+      response = Utils.getJsonResponse(Constants.FAILED, "No such user.");
     }
     if (username.equals(dbUsername)) {
-      response = getJsonResponse(Constants.SUCCESS, "Logged In.");
+      response = Utils.getJsonResponse(Constants.SUCCESS, "Logged In.");
+      String role = userDao.getRoleFromUsernameAndPassword(username, password);
+      session.setAttribute("username", username);
+      session.setAttribute("role", role);
     } else {
-      response = getJsonResponse(Constants.FAILED, "Invalid Credentials.");
+      response = Utils.getJsonResponse(Constants.FAILED, "Invalid Credentials.");
     }
 
     JSONObject jsonResponse = new JSONObject(response);
@@ -49,17 +45,15 @@ public class LoginServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-
-    Connection connection = null;
-
-    try {
-      connection = Utils.getConnection("postgres", "admin", "xyz@123", "library_management_system");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    HttpSession session = request.getSession();
 
     response.setContentType("application/json");
-    JSONObject jsonResponse = login(request, connection);
+    JSONObject jsonResponse = null;
+    try {
+      jsonResponse = login(request, session);
+    } catch (Exception e) {
+      e.getMessage();
+    }
     PrintWriter out = response.getWriter();
     out.print(jsonResponse);
   }

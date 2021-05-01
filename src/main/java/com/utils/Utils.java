@@ -5,10 +5,19 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 
 public class Utils {
+
+  public static HashMap<String, Object> getJsonResponse(String status, String message) {
+    HashMap<String, Object> response = new HashMap<String, Object>();
+    response.put(Constants.STATUS, status);
+    response.put(Constants.MESSAGE, message);
+    response.put(Constants.TIMESTAMP, new Date());
+    return response;
+  }
 
   public static Connection getConnection(String database, String user, String password,
       String dbName) throws SQLException, ClassNotFoundException {
@@ -37,8 +46,7 @@ public class Utils {
     return stringBuilder.toString();
   }
 
-  public static HashMap<String, Object> extractData(HttpServletRequest request)
-      throws IOException {
+  public static HashMap<String, Object> extractData(HttpServletRequest request) throws IOException {
     HashMap<String, Object> map = new HashMap<String, Object>();
     String body = getBody(request);
     String[] elements = body.split(",");

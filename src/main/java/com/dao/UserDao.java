@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import com.models.User;
+import com.utils.Utils;
 
 public class UserDao {
 
@@ -16,8 +17,15 @@ public class UserDao {
     statement.close();
   }
 
-  public String getUsernameFromPassword(Connection connection, String password)
-      throws SQLException {
+  public String getUsernameFromPassword(String password) throws SQLException {
+    Connection connection = null;
+
+    try {
+      connection = Utils.getConnection("postgres", "admin", "xyz@123", "library_management_system");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     String result = "";
     String query = "select username from users where password='" + password + "';";
     Statement statement = connection.createStatement();
@@ -29,9 +37,40 @@ public class UserDao {
     return result;
   }
 
-  public long addUser(Connection connection, User user) {
+  public String getRoleFromUsernameAndPassword(String username, String password)
+      throws SQLException {
+    Connection connection = null;
+    String role = "";
+
+    try {
+      connection = Utils.getConnection("postgres", "admin", "xyz@123", "library_management_system");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    String query = "select role from users where username=? and password=?";
+    PreparedStatement preparedStatement = connection.prepareStatement(query);
+    preparedStatement.setString(1, username);
+    preparedStatement.setString(2, password);
+
+    ResultSet resultSet = preparedStatement.executeQuery();
+    if (resultSet.next()) {
+      role = resultSet.getString("role");
+    }
+    return role;
+  }
+
+  public long addUser(User user) {
+    Connection connection = null;
+
+    try {
+      connection = Utils.getConnection("postgres", "admin", "xyz@123", "library_management_system");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     String query =
-        "insert into users (username, password, email, role, issued_books) values (?, ?, ?, ?, ?)";
+        "insert into users (username, password, email, role, issued_books) values (?, ?, ?, ?, ?);";
     PreparedStatement preparedStatement;
     long id = -1;
     try {
