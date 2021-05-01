@@ -10,4 +10,14 @@
     <servlet-name>login</servlet-name>
     <url-pattern>/librarysystem.com/login</url-pattern>  
 </servlet-mapping>
+
+<servlet>
+    <servlet-name>signup</servlet-name>
+    <servlet-class>com.servlets.SignUpServlet</servlet-class>
+</servlet>
+ <servlet-mapping>
+    <servlet-name>signup</servlet-name>
+    <url-pattern>/librarysystem.com/signup</url-pattern>  
+</servlet-mapping>
+
 </web-app>

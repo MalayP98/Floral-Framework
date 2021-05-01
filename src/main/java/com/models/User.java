@@ -9,6 +9,10 @@ public class User {
   private ROLES role;
   private int issuedBooks;
 
+  public User() {
+
+  }
+
   public User(String username, String password, String email, ROLES role, int issuedBooks) {
     super();
     this.username = username;

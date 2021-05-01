@@ -37,7 +37,7 @@ public class Utils {
     return stringBuilder.toString();
   }
 
-  public static HashMap<String, Object> extractElement(HttpServletRequest request)
+  public static HashMap<String, Object> extractData(HttpServletRequest request)
       throws IOException {
     HashMap<String, Object> map = new HashMap<String, Object>();
     String body = getBody(request);

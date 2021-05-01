@@ -5,15 +5,18 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.HashMap;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import com.dao.UserDao;
+import com.models.ROLES;
+import com.models.User;
 import com.utils.Constants;
 import com.utils.Utils;
 
-public class LoginServlet extends HttpServlet {
+public class SignUpServlet extends HttpServlet {
 
   UserDao userDao = new UserDao();
 
@@ -25,21 +28,26 @@ public class LoginServlet extends HttpServlet {
     return response;
   }
 
-  public JSONObject login(HttpServletRequest request, Connection connection) throws IOException {
+  public User populateUser(HashMap<String, Object> map) {
+    User user = new User();
+    user.setUsername((String) map.get("username"));
+    user.setPassword((String) map.get("password"));
+    user.setEmail((String) map.get("email"));
+    user.setRole((map.get("role").equals("admin")) ? ROLES.admin : ROLES.user);
+    user.setIssuedBooks(0);
+    return user;
+  }
+
+  private JSONObject addUser(HttpServletRequest request, Connection connection) throws IOException {
     HashMap<String, Object> map = Utils.extractData(request);
     HashMap<String, Object> response = new HashMap<String, Object>();
-    String username = (String) map.get("name");
-    String password = (String) map.get("password");
-    String dbUsername = "";
+    User user = populateUser(map);
     try {
-      dbUsername = userDao.getUsernameFromPassword(connection, password);
+      userDao.addUser(connection, user);
+      response = getJsonResponse(Constants.SUCCESS, "Signup Successfull");
     } catch (Exception e) {
-      response = getJsonResponse(Constants.FAILED, "No such user.");
-    }
-    if (username.equals(dbUsername)) {
-      response = getJsonResponse(Constants.SUCCESS, "Logged In.");
-    } else {
-      response = getJsonResponse(Constants.FAILED, "Invalid Credentials.");
+      System.out.println(e.getMessage());
+      response = getJsonResponse(Constants.FAILED, "Something wrong. Enter details again.");
     }
 
     JSONObject jsonResponse = new JSONObject(response);
@@ -48,7 +56,7 @@ public class LoginServlet extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
+      throws ServletException, IOException {
 
     Connection connection = null;
 
@@ -59,8 +67,9 @@ public class LoginServlet extends HttpServlet {
     }
 
     response.setContentType("application/json");
-    JSONObject jsonResponse = login(request, connection);
+    JSONObject jsonResponse = addUser(request, connection);
     PrintWriter out = response.getWriter();
     out.print(jsonResponse);
   }
+
 }
