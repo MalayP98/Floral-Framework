@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,9 +32,9 @@ public class LoginServlet extends HttpServlet {
     }
     if (username.equals(dbUsername)) {
       response = Utils.getJsonResponse(Constants.SUCCESS, "Logged In.");
-      String role = userDao.getRoleFromUsernameAndPassword(username, password);
-      session.setAttribute("username", username);
-      session.setAttribute("role", role);
+      List<Object> result = userDao.getRoleAndIdFromUsernameAndPassword(dbUsername, password);
+      session.setAttribute("id", result.get(1));
+      session.setAttribute("role", result.get(0));
     } else {
       response = Utils.getJsonResponse(Constants.FAILED, "Invalid Credentials.");
     }
@@ -52,7 +53,7 @@ public class LoginServlet extends HttpServlet {
     try {
       jsonResponse = login(request, session);
     } catch (Exception e) {
-      e.getMessage();
+      System.out.println(e.getMessage());
     }
     PrintWriter out = response.getWriter();
     out.print(jsonResponse);

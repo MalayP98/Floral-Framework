@@ -40,7 +40,7 @@ public class Utils {
     BufferedReader reader = request.getReader();
     String line = reader.readLine();
     while (line != null) {
-      stringBuilder.append(line + ",");
+      stringBuilder.append(line + ";");
       line = reader.readLine();
     }
     return stringBuilder.toString();
@@ -49,10 +49,13 @@ public class Utils {
   public static HashMap<String, Object> extractData(HttpServletRequest request) throws IOException {
     HashMap<String, Object> map = new HashMap<String, Object>();
     String body = getBody(request);
-    String[] elements = body.split(",");
+    String[] elements = body.split(";");
     for (String element : elements) {
       String[] pair = element.split("=");
-      map.put(pair[0].trim(), pair[1].trim());
+      if (pair[1].split(",").length == 1)
+        map.put(pair[0].trim(), pair[1].trim());
+      else
+        map.put(pair[0].trim(), pair[1].split(","));
     }
     return map;
   }

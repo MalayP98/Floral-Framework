@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import com.models.User;
 import com.utils.Utils;
 
@@ -37,10 +39,10 @@ public class UserDao {
     return result;
   }
 
-  public String getRoleFromUsernameAndPassword(String username, String password)
+  public List<Object> getRoleAndIdFromUsernameAndPassword(String username, String password)
       throws SQLException {
     Connection connection = null;
-    String role = "";
+    List<Object> result = new ArrayList<Object>();
 
     try {
       connection = Utils.getConnection("postgres", "admin", "xyz@123", "library_management_system");
@@ -48,19 +50,21 @@ public class UserDao {
       e.printStackTrace();
     }
 
-    String query = "select role from users where username=? and password=?";
+    String query = "select role, user_id from users where username=? and password=?";
     PreparedStatement preparedStatement = connection.prepareStatement(query);
     preparedStatement.setString(1, username);
     preparedStatement.setString(2, password);
 
     ResultSet resultSet = preparedStatement.executeQuery();
     if (resultSet.next()) {
-      role = resultSet.getString("role");
+      result.add(resultSet.getString("role"));
+      result.add(resultSet.getString("user_id"));
     }
-    return role;
+    closeAll(connection, preparedStatement, resultSet);
+    return result;
   }
 
-  public long addUser(User user) {
+  public long addUser(User user) throws SQLException {
     Connection connection = null;
 
     try {
@@ -71,7 +75,8 @@ public class UserDao {
 
     String query =
         "insert into users (username, password, email, role, issued_books) values (?, ?, ?, ?, ?);";
-    PreparedStatement preparedStatement;
+    PreparedStatement preparedStatement = null;
+    ResultSet resultSet = null;
     long id = -1;
     try {
       preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -83,7 +88,7 @@ public class UserDao {
 
       int affectedRows = preparedStatement.executeUpdate();
       if (affectedRows == 1) {
-        ResultSet resultSet = preparedStatement.getGeneratedKeys();
+        resultSet = preparedStatement.getGeneratedKeys();
         if (resultSet.next()) {
           id = resultSet.getLong(1);
         } else
@@ -92,6 +97,7 @@ public class UserDao {
     } catch (SQLException e) {
       e.getMessage();
     }
+    closeAll(connection, preparedStatement, resultSet);
     return id;
   }
 }

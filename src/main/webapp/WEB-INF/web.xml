@@ -29,4 +29,13 @@
     <url-pattern>/librarysystem.com/book/*</url-pattern>  
 </servlet-mapping>
 
+<servlet>
+    <servlet-name>issue</servlet-name>
+    <servlet-class>com.servlets.IssueServlet</servlet-class>
+</servlet>
+ <servlet-mapping>
+    <servlet-name>issue</servlet-name>
+    <url-pattern>/librarysystem.com/issue/*</url-pattern>  
+</servlet-mapping>
+
 </web-app>

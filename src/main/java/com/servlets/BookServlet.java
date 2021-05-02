@@ -2,7 +2,6 @@ package com.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,8 +22,7 @@ public class BookServlet extends HttpServlet {
     return (session.getAttribute("role").equals("admin")) ? true : false;
   }
 
-  public JSONObject addBook(HttpServletRequest request, Connection connection, HttpSession session)
-      throws IOException {
+  public JSONObject addBook(HttpServletRequest request, HttpSession session) throws IOException {
     HashMap<String, Object> response = null;
     boolean canAdd = verify(session);
     if (canAdd) {
@@ -55,18 +53,12 @@ public class BookServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    Connection connection = null;
     HttpSession session;
     PrintWriter out = response.getWriter();
-    try {
-      connection = Utils.getConnection("postgres", "admin", "xyz@123", "library_management_system");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
 
     session = request.getSession();
     response.setContentType("application/json");
-    JSONObject jsonResponse = addBook(request, connection, session);
+    JSONObject jsonResponse = addBook(request, session);
     out.print(jsonResponse);
   }
 }
