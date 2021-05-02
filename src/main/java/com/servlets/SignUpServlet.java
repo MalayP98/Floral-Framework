@@ -34,10 +34,10 @@ public class SignUpServlet extends HttpServlet {
     User user = populateUser(map);
     try {
       userDao.addUser(user);
-      response = Utils.getJsonResponse(Constants.SUCCESS, "Signup Successfull");
+      response = Utils.getMapResponse(Constants.SUCCESS, "Signup Successfull");
     } catch (Exception e) {
       System.out.println(e.getMessage());
-      response = Utils.getJsonResponse(Constants.FAILED, "Something wrong. Enter details again.");
+      response = Utils.getMapResponse(Constants.FAILED, "Something wrong. Enter details again.");
     }
 
     JSONObject jsonResponse = new JSONObject(response);

@@ -30,13 +30,13 @@ public class BookServlet extends HttpServlet {
         HashMap<String, Object> map = Utils.extractData(request);
         Book book = populateBook(map);
         booksDao.addBook(book);
-        response = Utils.getJsonResponse(Constants.SUCCESS, "Book added successfully.");
+        response = Utils.getMapResponse(Constants.SUCCESS, "Book added successfully.");
       } catch (Exception e) {
         System.out.println(e.getMessage());
-        response = Utils.getJsonResponse(Constants.FAILED, "Something wrong. Enter data again.");
+        response = Utils.getMapResponse(Constants.FAILED, "Something wrong. Enter data again.");
       }
     } else {
-      response = Utils.getJsonResponse(Constants.FAILED, "Authorization Failed.");
+      response = Utils.getMapResponse(Constants.FAILED, "Authorization Failed.");
     }
     return new JSONObject(response);
   }

@@ -28,15 +28,15 @@ public class LoginServlet extends HttpServlet {
     try {
       dbUsername = userDao.getUsernameFromPassword(password);
     } catch (Exception e) {
-      response = Utils.getJsonResponse(Constants.FAILED, "No such user.");
+      response = Utils.getMapResponse(Constants.FAILED, "No such user.");
     }
     if (username.equals(dbUsername)) {
-      response = Utils.getJsonResponse(Constants.SUCCESS, "Logged In.");
+      response = Utils.getMapResponse(Constants.SUCCESS, "Logged In.");
       List<Object> result = userDao.getRoleAndIdFromUsernameAndPassword(dbUsername, password);
       session.setAttribute("id", result.get(1));
       session.setAttribute("role", result.get(0));
     } else {
-      response = Utils.getJsonResponse(Constants.FAILED, "Invalid Credentials.");
+      response = Utils.getMapResponse(Constants.FAILED, "Invalid Credentials.");
     }
 
     JSONObject jsonResponse = new JSONObject(response);

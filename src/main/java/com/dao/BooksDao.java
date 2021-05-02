@@ -81,4 +81,39 @@ public class BooksDao {
       }
     }
   }
+
+  public void returnBook(String[] books, int user_id) throws SQLException {
+    Connection connection = null;
+
+    try {
+      connection = Utils.getConnection("postgres", "admin", "xyz@123", "library_management_system");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    String allBooks = "select book_id, copies from books where book_name=?";
+    String deleteBook = "delete from user_book where user_id=? and book_id=?";
+    String incrementCopies = "update books set copies=? where book_id=?";
+    PreparedStatement preparedStatement;
+    ResultSet resultSet = null;
+    for (String book : books) {
+      preparedStatement = connection.prepareStatement(allBooks);
+      preparedStatement.setString(1, book);
+      resultSet = preparedStatement.executeQuery();
+      if (resultSet.next()) {
+        int id = resultSet.getInt("book_id");
+        int copies = resultSet.getInt("copies");
+
+        preparedStatement = connection.prepareStatement(deleteBook);
+        preparedStatement.setInt(1, user_id);
+        preparedStatement.setInt(2, id);
+        preparedStatement.executeUpdate();
+
+        preparedStatement = connection.prepareStatement(incrementCopies);
+        preparedStatement.setInt(1, copies + 1);
+        preparedStatement.setInt(2, id);
+        preparedStatement.executeUpdate();
+      }
+    }
+  }
 }

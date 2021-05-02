@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Utils {
 
-  public static HashMap<String, Object> getJsonResponse(String status, String message) {
+  public static HashMap<String, Object> getMapResponse(String status, String message) {
     HashMap<String, Object> response = new HashMap<String, Object>();
     response.put(Constants.STATUS, status);
     response.put(Constants.MESSAGE, message);
