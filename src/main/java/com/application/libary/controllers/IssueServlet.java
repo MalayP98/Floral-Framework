@@ -14,10 +14,16 @@ import com.application.libary.dao.BooksDao;
 import com.application.libary.dao.UserDao;
 import com.application.libary.utils.Constants;
 import com.application.libary.utils.Utils;
+import com.dummyframework.annotations.Autowired;
+import com.dummyframework.annotations.Controller;
 
+@Controller
 public class IssueServlet extends HttpServlet {
 
+  @Autowired
   UserDao userDao = new UserDao();
+
+  @Autowired
   BooksDao bookDao = new BooksDao();
 
   public String handleRequest(HttpServletRequest request) {

@@ -13,9 +13,13 @@ import com.application.libary.models.ROLES;
 import com.application.libary.models.User;
 import com.application.libary.utils.Constants;
 import com.application.libary.utils.Utils;
+import com.dummyframework.annotations.Autowired;
+import com.dummyframework.annotations.Controller;
 
+@Controller
 public class SignUpServlet extends HttpServlet {
 
+  @Autowired
   UserDao userDao = new UserDao();
 
   public User populateUser(HashMap<String, Object> map) {

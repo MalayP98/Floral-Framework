@@ -10,7 +10,9 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 import com.application.libary.utils.Constants;
 import com.application.libary.utils.Utils;
+import com.dummyframework.annotations.Controller;
 
+@Controller
 public class LogOutServlet extends HttpServlet {
 
   @Override

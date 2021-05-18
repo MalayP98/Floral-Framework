@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-public class ComponentScan {
+public class ScanComponent {
 
   public static String modifyPackage(String packageName, File directory) {
     String[] path = directory.toString().split("/");

@@ -13,9 +13,13 @@ import com.application.libary.dao.BooksDao;
 import com.application.libary.models.Book;
 import com.application.libary.utils.Constants;
 import com.application.libary.utils.Utils;
+import com.dummyframework.annotations.Autowired;
+import com.dummyframework.annotations.Controller;
 
+@Controller
 public class BookServlet extends HttpServlet {
 
+  @Autowired
   BooksDao booksDao = new BooksDao();
 
   public boolean verify(HttpSession session) {

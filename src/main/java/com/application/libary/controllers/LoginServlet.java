@@ -13,9 +13,13 @@ import org.json.JSONObject;
 import com.application.libary.dao.UserDao;
 import com.application.libary.utils.Constants;
 import com.application.libary.utils.Utils;
+import com.dummyframework.annotations.Autowired;
+import com.dummyframework.annotations.Controller;
 
+@Controller
 public class LoginServlet extends HttpServlet {
 
+  @Autowired
   UserDao userDao = new UserDao();
 
   public JSONObject login(HttpServletRequest request, HttpSession session)
