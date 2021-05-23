@@ -1,4 +1,4 @@
-package com.application.libary.dao;
+package com.application.library.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import com.application.libary.models.User;
-import com.application.libary.utils.Utils;
+import com.application.library.models.User;
+import com.application.library.utils.Utils;
 
 public class UserDao {
 

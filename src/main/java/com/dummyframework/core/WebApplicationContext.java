@@ -4,6 +4,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import com.dummyframework.annotations.Autowired;
@@ -12,8 +14,8 @@ import com.dummyframework.annotations.RequestMapping;
 
 public class WebApplicationContext {
 
-  public HashMap<String, Object> beanMap = new HashMap<String, Object>();
-  public HashMap<String, String> urlMap = new HashMap<String, String>();
+  private HashMap<String, Object> beanMap = new HashMap<String, Object>();
+  private HashMap<String, List<Object>> urlMap = new HashMap<String, List<Object>>();
 
   public WebApplicationContext(List<String> classes)
       throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException,
@@ -45,11 +47,15 @@ public class WebApplicationContext {
       RequestMapping annotation = method.getAnnotation(RequestMapping.class);
       boolean isRequestMapped = (annotation != null);
       if (isRequestMapped) {
-        String url = annotation.url();
-        String type = annotation.type().toString();
+        List<Object> specification = new ArrayList<Object>();
+        Parameter[] params = method.getParameters();
+        String url = annotation.value();
+        String type = annotation.method().toString();
         String key = url + "#" + type;
-        String value = clazz.toString() + "#" + method.toString();
-        urlMap.put(key, value);
+        String value = clazz.getName() + "#" + method.getName();
+        specification.add(value);
+        specification.add(params);
+        urlMap.put(key, specification);
       }
     }
   }
@@ -71,4 +77,15 @@ public class WebApplicationContext {
     }
   }
 
+  public HashMap<String, List<Object>> getUrlMap() {
+    return urlMap;
+  }
+
+  public HashMap<String, Object> getBeanMap() {
+    return beanMap;
+  }
+
+  public Object getBean(String className) {
+    return beanMap.get(className);
+  }
 }

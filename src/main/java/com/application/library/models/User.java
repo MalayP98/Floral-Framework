@@ -1,4 +1,4 @@
-package com.application.libary.models;
+package com.application.library.models;
 
 public class User {
 

@@ -5,6 +5,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.dummyframework.annotations.ComponentScan;
+import com.dummyframework.exception.AppContextException;
 import com.dummyframework.exception.NoComponentScanException;
 
 
@@ -12,7 +13,7 @@ public class DummyFramework {
 
   private static String ROOT_PACKAGE = null;
 
-  private static WebApplicationContext webApplicationContext;
+  private static WebApplicationContext webApplicationContext = null;
 
   public static void setRootPackage(String rootPackage) {
     ROOT_PACKAGE = rootPackage;
@@ -53,5 +54,11 @@ public class DummyFramework {
       throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException,
       NoSuchMethodException, SecurityException, InstantiationException, InvocationTargetException {
     webApplicationContext = new WebApplicationContext(classes);
+  }
+
+  public static WebApplicationContext getWebApplicationContext() throws AppContextException {
+    if (webApplicationContext != null)
+      return webApplicationContext;
+    throw new AppContextException();
   }
 }

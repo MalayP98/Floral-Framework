@@ -1,4 +1,4 @@
-package com.application.libary.models;
+package com.application.library.models;
 
 public class Book {
 
@@ -24,8 +24,14 @@ public class Book {
     return bookName;
   }
 
-  public void setBookName(String book_name) {
-    this.bookName = book_name;
+  public void setBookName(String bookName) {
+    this.bookName = bookName;
+  }
+
+  @Override
+  public String toString() {
+    return "Book [bookId=" + bookId + ", bookName=" + bookName + ", author=" + author + ", copies="
+        + copies + ", isbn=" + isbn + "]";
   }
 
   public String getAuthor() {

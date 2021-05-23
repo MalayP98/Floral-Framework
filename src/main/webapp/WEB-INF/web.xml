@@ -2,24 +2,28 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
   <display-name>librarysystem.com</display-name>
   
-  <servlet>
-    <servlet-name>dispatcherServlet</servlet-name>
-    <servlet-class>com.dummyframework.servltes.DispatcherServlet</servlet-class>
+  <listener>
+       <listener-class>com.dummyframework.core.DefaultServletContextListner</listener-class>
+    </listener>
+  
+ <servlet>
+    <servlet-name>frontController</servlet-name>
+    <servlet-class>com.dummyframework.servlets.DispatcherServlet</servlet-class>
 </servlet>
  <servlet-mapping>
-    <servlet-name>dispatcherServlet</servlet-name>
-    <url-pattern>/*</url-pattern>  
+    <servlet-name>frontController</servlet-name>
+    <url-pattern>/librarysystem.com/*</url-pattern>  
 </servlet-mapping>
   
  
- <servlet>
+<!--  <servlet>
     <servlet-name>login</servlet-name>
     <servlet-class>com.application.libary.controllers.LoginServlet</servlet-class>
 </servlet>
  <servlet-mapping>
     <servlet-name>login</servlet-name>
-    <url-pattern>/librarysystem.com/login</url-pattern>  
-</servlet-mapping>
+    <url-pattern>/librarysystem.com/*</url-pattern>  
+</servlet-mapping>  -->
 
 <!--<servlet>
     <servlet-name>signup</servlet-name>

@@ -1,0 +1,49 @@
+package com.application.library.controllers;
+
+import static com.dummyframework.core.FrameworkSession.add;
+import java.util.Date;
+import java.util.List;
+import com.application.library.dao.UserDao;
+import com.application.library.models.LoginForm;
+import com.application.library.models.StandardOutput;
+import com.application.library.utils.Constants;
+import com.dummyframework.annotations.Autowired;
+import com.dummyframework.annotations.Controller;
+import com.dummyframework.annotations.RequestBody;
+import com.dummyframework.annotations.RequestMapping;
+import com.dummyframework.utils.RequestMethod;
+
+@Controller
+public class LoginController {
+
+  @Autowired
+  UserDao userDao;
+
+  @Autowired
+  StandardOutput standardOutput;
+
+  @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
+  public StandardOutput login(@RequestBody(tag = "loginForm") LoginForm loginForm) {
+    String username = loginForm.getName();
+    String password = loginForm.getPassword();
+    String dbUsername = "";
+    try {
+      dbUsername = userDao.getUsernameFromPassword(password);
+      List<Object> result = userDao.getRoleAndIdFromUsernameAndPassword(dbUsername, password);
+      add("id", result.get(1));
+      add("role", result.get(0));
+    } catch (Exception e) {
+      standardOutput.setStatus(Constants.FAILED);
+      standardOutput.setMessage("Invalid credentials.");
+    }
+    if (username.equals(dbUsername)) {
+      standardOutput.setStatus(Constants.SUCCESS);
+      standardOutput.setMessage("Logged In.");
+    } else {
+      standardOutput.setStatus(Constants.FAILED);
+      standardOutput.setMessage("Invalid credentials.");
+    }
+    standardOutput.setDate(new Date());
+    return standardOutput;
+  }
+}

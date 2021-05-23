@@ -1,4 +1,4 @@
-package com.application.libary;
+package com.application.library;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -14,5 +14,4 @@ public class LibrarySystem {
       NoSuchMethodException, SecurityException, InstantiationException, InvocationTargetException {
     DummyFramework.run(LibrarySystem.class);
   }
-
 }

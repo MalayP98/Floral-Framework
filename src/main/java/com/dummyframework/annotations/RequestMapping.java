@@ -10,8 +10,12 @@ import com.dummyframework.utils.RequestMethod;
 @Target(ElementType.METHOD)
 public @interface RequestMapping {
 
-  String url() default "";
+  String value() default "";
 
-  RequestMethod type() default RequestMethod.GET;
+  RequestMethod method() default RequestMethod.GET;
+
+  String consumes() default "application/json";
+
+  String produces() default "application/json";
 
 }

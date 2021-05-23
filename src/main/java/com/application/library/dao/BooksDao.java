@@ -1,4 +1,4 @@
-package com.application.libary.dao;
+package com.application.library.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,8 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import com.application.libary.models.Book;
-import com.application.libary.utils.Utils;
+import com.application.library.models.Book;
+import com.application.library.utils.Utils;
 
 public class BooksDao {
 
@@ -47,7 +47,7 @@ public class BooksDao {
     return id;
   }
 
-  public void issuseBooks(String[] books, int user_id) throws SQLException {
+  public void issuseBooks(List<String> books, int user_id) throws SQLException {
     Connection connection = null;
     List<Integer> bookIds = new ArrayList<Integer>();
     PreparedStatement preparedStatement;
@@ -83,7 +83,7 @@ public class BooksDao {
     }
   }
 
-  public void returnBook(String[] books, int user_id) throws SQLException {
+  public void returnBook(List<String> books, int user_id) throws SQLException {
     Connection connection = null;
     PreparedStatement preparedStatement;
     ResultSet resultSet = null;

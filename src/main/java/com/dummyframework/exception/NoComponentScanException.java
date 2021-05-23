@@ -2,7 +2,7 @@ package com.dummyframework.exception;
 
 public class NoComponentScanException extends Exception {
 
-  public void N0ComponentScanException() {
+  public NoComponentScanException() {
     System.out.println("Component Scan not defined.");
   }
 
