@@ -13,25 +13,6 @@ import com.dummyframework.exception.NoPatternMatchedException;
 
 public class FrameworkUtils {
 
-  public static final String ANNOTATION_MATCHER =
-      "[a-zA-Z@\\.]*\\.([A-Za-z]*)\\((([A-Za-z]*)=\"([A-Za-z./\\s]*)\",?\\s?)*\\)";
-
-  public static final String REQUEST_REGEX =
-      "\\/([A-Za-z-.]*)\\/([A-Za-z.]*)(\\/[A-Za-z]*)\\/?([A-Za-z?&0-9=]*)\\/?";
-
-  public static final String METHOD_CLASS_SEPRATOR_REGEX = "([A-Za-z._]*)#{1}([A-Za-z_]*)";
-
-  public static final String PAYLOAD_EXTRACTOR =
-      "([A-Za-z0-9]*):{1}\\({1}([A-Za-z\"=0-9,.@|\\s]*)\\){1}";
-
-  public static final String SETTER_METHOD = "set{1}([a-zA-Z_]*)";
-
-  public static final String GETTER_METHOD = "get{1}([a-zA-Z_]*)";
-
-  public static final String EXTRACT_LIST = "\\|{1}([A-Za-z,\\s]*)\\|{1}";
-
-  public static final String REMOVE_QUOTED = "\"{1}([A-Za-z0-9_@.]*)\"{1}";
-
   public static String matchPattern(String str, String regex, int group)
       throws NoPatternMatchedException {
     Pattern pattern = Pattern.compile(regex);
@@ -47,7 +28,7 @@ public class FrameworkUtils {
     BufferedReader reader = request.getReader();
     String line = reader.readLine();
     while (line != null) {
-      stringBuilder.append(line + ";");
+      stringBuilder.append(line + Constants.SEMI_COLON);
       line = reader.readLine();
     }
     return stringBuilder.toString();
@@ -55,28 +36,28 @@ public class FrameworkUtils {
 
   public static HashMap<String, String> getInput(String line) throws NoPatternMatchedException {
     HashMap<String, String> extracted = new HashMap<String, String>();
-    String tag = matchPattern(line, PAYLOAD_EXTRACTOR, 1);
-    String input = matchPattern(line, PAYLOAD_EXTRACTOR, 2);
-    extracted.put("tag", tag);
-    extracted.put("input", input);
+    String tag = matchPattern(line, Constants.PAYLOAD_EXTRACTOR, Constants.ONE);
+    String input = matchPattern(line, Constants.PAYLOAD_EXTRACTOR, Constants.TWO);
+    extracted.put(Constants.TAG, tag);
+    extracted.put(Constants.INPUT, input);
     return extracted;
   }
 
   private static Object getTagValue(String input) throws NoPatternMatchedException {
-    if (!input.startsWith("|")) {
-      String[] values = input.split(",\\s?");
+    if (!input.startsWith(Constants.ARRAY_CONTAINER)) {
+      String[] values = input.split(Constants.PARAM_SEPRATOR);
       HashMap<String, Object> tagValueMap = new HashMap<String, Object>();
       for (String value : values) {
-        String[] params_value = value.split("=");
-        String paramName =
-            (!params_value[0].equals("$")) ? matchPattern(params_value[0], REMOVE_QUOTED, 1)
-                : params_value[0];
-        tagValueMap.put(paramName, appropriateType(params_value[1]));
+        String[] params_value = value.split(Constants.EQUAL);
+        String paramName = (!params_value[Constants.ZERO].equals(Constants.DOLLAR))
+            ? matchPattern(params_value[Constants.ZERO], Constants.REMOVE_QUOTED, Constants.ONE)
+            : params_value[Constants.ZERO];
+        tagValueMap.put(paramName, appropriateType(params_value[Constants.ONE]));
       }
       return tagValueMap;
     } else {
       String rawList = input.substring(1, input.length() - 1);
-      List<Object> list = Arrays.asList(rawList.split(",\\s?"));
+      List<Object> list = Arrays.asList(rawList.split(Constants.PARAM_SEPRATOR));
       for (int i = 0; i < list.size(); i++) {
         list.set(i, appropriateType((String) list.get(i)));
       }
@@ -87,23 +68,23 @@ public class FrameworkUtils {
   public static HashMap<String, Object> extractPayload(HttpServletRequest request)
       throws IOException, NoPatternMatchedException {
     String body = getBody(request);
-    String[] lines = body.split(";");
+    String[] lines = body.split(Constants.SEMI_COLON);
     HashMap<String, Object> tagMap = new HashMap<String, Object>();
     for (String line : lines) {
       if (line.isEmpty())
         continue;
       HashMap<String, String> extracted = getInput(line);
-      String tag = extracted.get("tag");
-      String input = extracted.get("input");
+      String tag = extracted.get(Constants.TAG);
+      String input = extracted.get(Constants.INPUT);
       tagMap.put(tag, getTagValue(input));
     }
     return tagMap;
   }
 
   private static Object appropriateType(String value) throws NoPatternMatchedException {
-    if (value.startsWith("\""))
-      return matchPattern(value, REMOVE_QUOTED, 1);
-    else if (value.split("\\.{1}").length == 2) {
+    if (value.startsWith(Constants.QUOTES))
+      return matchPattern(value, Constants.REMOVE_QUOTED, Constants.ONE);
+    else if (value.split(Constants.DECIMAL_CHECK).length == Constants.TWO) {
       try {
         float object = Float.parseFloat(value);
         return object;
@@ -132,7 +113,7 @@ public class FrameworkUtils {
 
   public static boolean isJavaObject(Parameter param) {
     String paramClassType = param.getType().getName();
-    if (paramClassType.startsWith("java.") || paramClassType.startsWith("[Ljava."))
+    if (paramClassType.contains(Constants.JAVA))
       return true;
     return false;
   }

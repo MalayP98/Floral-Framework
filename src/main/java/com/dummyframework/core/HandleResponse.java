@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import org.json.JSONObject;
 import com.dummyframework.exception.NoPatternMatchedException;
+import com.dummyframework.utils.Constants;
 import com.dummyframework.utils.FrameworkUtils;
 
 public class HandleResponse {
@@ -28,7 +29,7 @@ public class HandleResponse {
     for (Method method : methods) {
       String getterName = null;
       try {
-        getterName = FrameworkUtils.matchPattern(method.getName(), FrameworkUtils.GETTER_METHOD, 1);
+        getterName = FrameworkUtils.matchPattern(method.getName(), Constants.GETTER_METHOD, 1);
         fieldValueMap.put(getterName.toLowerCase(), method.invoke(returnValue, null));
       } catch (NoPatternMatchedException e) {
         System.out.println(e.getMessage());

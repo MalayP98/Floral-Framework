@@ -22,7 +22,7 @@ public class ResolveParams {
     for (Method method : methods) {
       String setterName = null;
       try {
-        setterName = FrameworkUtils.matchPattern(method.getName(), FrameworkUtils.SETTER_METHOD, 1);
+        setterName = FrameworkUtils.matchPattern(method.getName(), Constants.SETTER_METHOD, 1);
         setters.put(setterName.toLowerCase(), method);
       } catch (NoPatternMatchedException e) {
         System.out.println(e.getMessage());
