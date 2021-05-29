@@ -62,6 +62,28 @@ public class FrameworkUtils {
     return extracted;
   }
 
+  private static Object getTagValue(String input) throws NoPatternMatchedException {
+    if (!input.startsWith("|")) {
+      String[] values = input.split(",\\s?");
+      HashMap<String, Object> tagValueMap = new HashMap<String, Object>();
+      for (String value : values) {
+        String[] params_value = value.split("=");
+        String paramName =
+            (!params_value[0].equals("$")) ? matchPattern(params_value[0], REMOVE_QUOTED, 1)
+                : params_value[0];
+        tagValueMap.put(paramName, appropriateType(params_value[1]));
+      }
+      return tagValueMap;
+    } else {
+      String rawList = input.substring(1, input.length() - 1);
+      List<Object> list = Arrays.asList(rawList.split(",\\s?"));
+      for (int i = 0; i < list.size(); i++) {
+        list.set(i, appropriateType((String) list.get(i)));
+      }
+      return list;
+    }
+  }
+
   public static HashMap<String, Object> extractPayload(HttpServletRequest request)
       throws IOException, NoPatternMatchedException {
     String body = getBody(request);
@@ -73,25 +95,7 @@ public class FrameworkUtils {
       HashMap<String, String> extracted = getInput(line);
       String tag = extracted.get("tag");
       String input = extracted.get("input");
-      if (!input.startsWith("|")) {
-        String[] values = input.split(",\\s?");
-        HashMap<String, Object> tagValueMap = new HashMap<String, Object>();
-        for (String value : values) {
-          String[] params_value = value.split("=");
-          String paramName =
-              (!params_value[0].equals("$")) ? matchPattern(params_value[0], REMOVE_QUOTED, 1)
-                  : params_value[0];
-          tagValueMap.put(paramName, appropriateType(params_value[1]));
-        }
-        tagMap.put(tag, tagValueMap);
-      } else {
-        String rawList = input.substring(1, input.length() - 1);
-        List<Object> list = Arrays.asList(rawList.split(",\\s?"));
-        for (int i = 0; i < list.size(); i++) {
-          list.set(i, appropriateType((String) list.get(i)));
-        }
-        tagMap.put(tag, list);
-      }
+      tagMap.put(tag, getTagValue(input));
     }
     return tagMap;
   }
