@@ -1,5 +1,6 @@
 package com.dummyframework.core;
 
+import static com.dummyframework.utils.FrameworkUtils.getPrimitiveClass;
 import static com.dummyframework.utils.FrameworkUtils.isJavaObject;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -68,7 +69,9 @@ public class HandlerAdapter {
       InvocationTargetException, NoPatternMatchedException {
     int paramCount = 0;
     for (Parameter param : params) {
-      paramClassType[paramCount] = param.getType();
+      paramClassType[paramCount] =
+          (param.getType().isPrimitive()) ? getPrimitiveClass(param.getType().getName())
+              : param.getType();
       RequestBody annotation = param.getDeclaredAnnotation(RequestBody.class);
       boolean isRequestBody = (annotation != null);
       if (isRequestBody) {

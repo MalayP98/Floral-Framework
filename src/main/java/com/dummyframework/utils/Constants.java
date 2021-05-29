@@ -9,7 +9,7 @@ public class Constants {
       "\\/([A-Za-z-.]*)\\/([A-Za-z.]*)(\\/[A-Za-z]*)\\/?([A-Za-z?&0-9=]*)\\/?";
 
   public static final String PAYLOAD_EXTRACTOR =
-      "([A-Za-z0-9]*):{1}\\({1}([A-Za-z\"=0-9,.@|\\s]*)\\){1}";
+      "([A-Za-z0-9]*):{1}\\({1}([A-Za-z\"=0-9,.@|$\\s]*)\\){1}";
 
   public static final String METHOD_CLASS_SEPRATOR_REGEX = "([A-Za-z._]*)#{1}([A-Za-z_]*)";
 

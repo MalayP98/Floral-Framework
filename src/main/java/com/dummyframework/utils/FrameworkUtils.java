@@ -49,10 +49,16 @@ public class FrameworkUtils {
       HashMap<String, Object> tagValueMap = new HashMap<String, Object>();
       for (String value : values) {
         String[] params_value = value.split(Constants.EQUAL);
-        String paramName = (!params_value[Constants.ZERO].equals(Constants.DOLLAR))
-            ? matchPattern(params_value[Constants.ZERO], Constants.REMOVE_QUOTED, Constants.ONE)
-            : params_value[Constants.ZERO];
-        tagValueMap.put(paramName, appropriateType(params_value[Constants.ONE]));
+        // String paramName = (!params_value[Constants.ZERO].equals(Constants.DOLLAR))
+        // ? matchPattern(params_value[Constants.ZERO], Constants.REMOVE_QUOTED, Constants.ONE)
+        // : params_value[Constants.ZERO];
+        if (params_value[Constants.ZERO].equals(Constants.DOLLAR))
+          return appropriateType(params_value[Constants.ONE]);
+        else {
+          String paramName =
+              matchPattern(params_value[Constants.ZERO], Constants.REMOVE_QUOTED, Constants.ONE);
+          tagValueMap.put(paramName, appropriateType(params_value[Constants.ONE]));
+        }
       }
       return tagValueMap;
     } else {
@@ -86,18 +92,18 @@ public class FrameworkUtils {
       return matchPattern(value, Constants.REMOVE_QUOTED, Constants.ONE);
     else if (value.split(Constants.DECIMAL_CHECK).length == Constants.TWO) {
       try {
-        float object = Float.parseFloat(value);
+        Float object = Float.parseFloat(value);
         return object;
       } catch (NumberFormatException e) {
-        double object = Double.parseDouble(value);
+        Double object = Double.parseDouble(value);
         return object;
       }
     }
     try {
-      int object = Integer.parseInt(value);
+      Integer object = Integer.parseInt(value);
       return object;
     } catch (NumberFormatException e) {
-      long object = Long.parseLong(value);
+      Long object = Long.parseLong(value);
       return object;
     }
   }
@@ -113,8 +119,30 @@ public class FrameworkUtils {
 
   public static boolean isJavaObject(Parameter param) {
     String paramClassType = param.getType().getName();
-    if (paramClassType.contains(Constants.JAVA))
+    if (paramClassType.contains(Constants.JAVA) || param.getType().isPrimitive())
       return true;
     return false;
+  }
+
+  public static final Class<?> getPrimitiveClass(String typeName) {
+    if (typeName.equals("byte"))
+      return byte.class;
+    if (typeName.equals("short"))
+      return short.class;
+    if (typeName.equals("int"))
+      return int.class;
+    if (typeName.equals("long"))
+      return long.class;
+    if (typeName.equals("char"))
+      return char.class;
+    if (typeName.equals("float"))
+      return float.class;
+    if (typeName.equals("double"))
+      return double.class;
+    if (typeName.equals("boolean"))
+      return boolean.class;
+    if (typeName.equals("void"))
+      return void.class;
+    throw new IllegalArgumentException("Not primitive type : " + typeName);
   }
 }
