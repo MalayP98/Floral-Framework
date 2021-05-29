@@ -2,6 +2,7 @@ package com.dummyframework.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -74,13 +75,15 @@ public class FrameworkUtils {
       String input = extracted.get("input");
       if (!input.startsWith("|")) {
         String[] values = input.split(",\\s?");
-        HashMap<String, Object> paramValueMap = new HashMap<String, Object>();
+        HashMap<String, Object> tagValueMap = new HashMap<String, Object>();
         for (String value : values) {
           String[] params_value = value.split("=");
-          String paramName = matchPattern(params_value[0], REMOVE_QUOTED, 1);
-          paramValueMap.put(paramName, appropriateType(params_value[1]));
+          String paramName =
+              (!params_value[0].equals("$")) ? matchPattern(params_value[0], REMOVE_QUOTED, 1)
+                  : params_value[0];
+          tagValueMap.put(paramName, appropriateType(params_value[1]));
         }
-        tagMap.put(tag, paramValueMap);
+        tagMap.put(tag, tagValueMap);
       } else {
         String rawList = input.substring(1, input.length() - 1);
         List<Object> list = Arrays.asList(rawList.split(",\\s?"));
@@ -121,6 +124,13 @@ public class FrameworkUtils {
       return Long.parseLong((String) parameter);
     }
     return parameter;
+  }
+
+  public static boolean isJavaObject(Parameter param) {
+    String paramClassType = param.getType().getName();
+    if (paramClassType.startsWith("java.") || paramClassType.startsWith("[Ljava."))
+      return true;
+    return false;
   }
 
 }
