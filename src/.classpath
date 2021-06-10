@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="main/java"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/java-json.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/javax.servlet.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/postgresql-42.2.17.jre6.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

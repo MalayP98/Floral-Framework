@@ -17,9 +17,13 @@ public class DefaultServletContextListner implements ServletContextListener {
     } catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException
         | NoSuchMethodException | SecurityException | InstantiationException
         | InvocationTargetException | IOException | NoComponentScanException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  @Override
+  public void contextDestroyed(ServletContextEvent arg0) {
+    
   }
 
 }

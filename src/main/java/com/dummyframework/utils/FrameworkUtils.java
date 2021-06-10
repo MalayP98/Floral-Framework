@@ -49,9 +49,6 @@ public class FrameworkUtils {
       HashMap<String, Object> tagValueMap = new HashMap<String, Object>();
       for (String value : values) {
         String[] params_value = value.split(Constants.EQUAL);
-        // String paramName = (!params_value[Constants.ZERO].equals(Constants.DOLLAR))
-        // ? matchPattern(params_value[Constants.ZERO], Constants.REMOVE_QUOTED, Constants.ONE)
-        // : params_value[Constants.ZERO];
         if (params_value[Constants.ZERO].equals(Constants.DOLLAR))
           return appropriateType(params_value[Constants.ONE]);
         else {
@@ -63,7 +60,7 @@ public class FrameworkUtils {
       return tagValueMap;
     } else {
       String rawList = input.substring(1, input.length() - 1);
-      List<Object> list = Arrays.asList(rawList.split(Constants.PARAM_SEPRATOR));
+      List<Object> list = Arrays.asList((Object)rawList.split(Constants.PARAM_SEPRATOR));
       for (int i = 0; i < list.size(); i++) {
         list.set(i, appropriateType((String) list.get(i)));
       }
