@@ -23,7 +23,7 @@ public class DispatcherServlet extends HttpServlet {
   @Override
   protected void service(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-
+    
     FrameworkSession.setSession(request.getSession());
     HandlerAdapter ha = new HandlerAdapter(webApplicationContext);
     try {
@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
         writer.print(responseObject);
       }
     } catch (Exception e) {
-      System.out.println("---------------" + e.getMessage() + "-----------");
+      System.out.println(e.getMessage());
       System.out.println(e.getStackTrace());
     }
   }
