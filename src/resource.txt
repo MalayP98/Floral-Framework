@@ -1,0 +1,12 @@
+# compilation command
+javac -cp ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/lib/\* ~/Work/Projects/Dummy-Framework/src/main/java/com/*/*/*.java -d ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/classes
+javac -cp ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/classes/:Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/lib/\*  ~/Work/Projects/Dummy-Framework/src/main/java/com/*/*/*/*.java -d  ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/classes 
+cd ~/Work/Projects/Dummy-Framework/src/main/webapp/ && jar -cvf app.war * && cd
+cd ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ && rm -rf app app.war && cd
+mv ~/Work/Projects/Dummy-Framework/src/main/webapp/app.war ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ 
+cd ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ && jar -xvf app.war && cd
+
+#notes
+
+all the param value of inputs should be given in lower-cases. For eg, book:("bookname"="Book2",  "author"="Author2",  "copies"=4, "isbn"="abcd1234")
+here param values like bookname, author, etc are all in lower cases.

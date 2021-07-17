@@ -3,6 +3,7 @@ package com.dummyframework.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -60,9 +61,10 @@ public class FrameworkUtils {
       return tagValueMap;
     } else {
       String rawList = input.substring(1, input.length() - 1);
-      List<Object> list = Arrays.asList((Object)rawList.split(Constants.PARAM_SEPRATOR));
-      for (int i = 0; i < list.size(); i++) {
-        list.set(i, appropriateType((String) list.get(i)));
+      List<Object> list = new ArrayList<Object>();
+      for(Object x : list) System.out.println(x.toString());
+      for (String element : Arrays.asList(rawList.split(Constants.PARAM_SEPRATOR))) {
+        list.add(appropriateType(element));
       }
       return list;
     }
