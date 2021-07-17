@@ -62,7 +62,6 @@ public class FrameworkUtils {
     } else {
       String rawList = input.substring(1, input.length() - 1);
       List<Object> list = new ArrayList<Object>();
-      for(Object x : list) System.out.println(x.toString());
       for (String element : Arrays.asList(rawList.split(Constants.PARAM_SEPRATOR))) {
         list.add(appropriateType(element));
       }
