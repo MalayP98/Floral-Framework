@@ -2,17 +2,49 @@ package com.dummyframework.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import com.dummyframework.exception.NoPatternMatchedException;
 
 public class FrameworkUtils {
+
+  public FrameworkUtils() throws ClassNotFoundException{
+    initBeanableAnnotationClasses();
+  }
+
+  public final List<Class> beanableAnnotationClasses = new ArrayList<>();
+
+  public Object createObject(String className) throws ClassNotFoundException, NoSuchMethodException, 
+    SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, 
+    InvocationTargetException{
+    Class clazz = Class.forName(className);
+    Constructor constructor = clazz.getConstructor();
+    return constructor.newInstance();
+  }
+
+  public boolean isBeanable(String className) throws ClassNotFoundException{
+    Class annotatedClass = Class.forName(className);
+    for(Class clazz : beanableAnnotationClasses){
+      if(Objects.nonNull(annotatedClass.getAnnotation(clazz))){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public void initBeanableAnnotationClasses() throws ClassNotFoundException{
+    this.beanableAnnotationClasses.add(Class.forName("com.dummyframework.annotations.Controller"));
+    this.beanableAnnotationClasses.add(Class.forName("com.dummyframework.annotations.Service"));
+  }
 
   public static String matchPattern(String str, String regex, int group)
       throws NoPatternMatchedException {

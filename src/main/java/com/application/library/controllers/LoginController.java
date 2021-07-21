@@ -3,9 +3,10 @@ package com.application.library.controllers;
 import static com.dummyframework.core.FrameworkSession.add;
 import java.util.Date;
 import java.util.List;
-import com.application.library.dao.UserService;
+
 import com.application.library.models.LoginForm;
 import com.application.library.models.StandardOutput;
+import com.application.library.service.UserService;
 import com.application.library.utils.Constants;
 import com.dummyframework.annotations.Autowired;
 import com.dummyframework.annotations.Controller;
