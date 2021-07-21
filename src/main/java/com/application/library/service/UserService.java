@@ -1,4 +1,4 @@
-package com.application.library.dao;
+package com.application.library.service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import com.application.library.models.User;
 import com.application.library.utils.Utils;
+import com.dummyframework.annotations.Service;
 
+@Service
 public class UserService {
 
   public void closeAll(Connection connection, Statement statement, ResultSet resultSet)

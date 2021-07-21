@@ -8,11 +8,15 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import com.dummyframework.annotations.Autowired;
 import com.dummyframework.annotations.Controller;
 import com.dummyframework.annotations.RequestMapping;
+import com.dummyframework.utils.FrameworkUtils;
 
 public class WebApplicationContext {
+
+  private FrameworkUtils frameworkUtils = new FrameworkUtils();
 
   private HashMap<String, Object> beanMap = new HashMap<String, Object>();
   private HashMap<String, List<Object>> urlMap = new HashMap<String, List<Object>>();
@@ -27,54 +31,52 @@ public class WebApplicationContext {
       NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
       IllegalArgumentException, InvocationTargetException {
     for (String className : classes) {
-      Object bean = null;
-      Class clazz = Class.forName(className);
-      Controller annotation = (Controller) clazz.getAnnotation(Controller.class);
-      boolean isController = (annotation != null);
-      if (isController) {
-        Constructor classConstructor = clazz.getConstructor(null);
-        bean = classConstructor.newInstance(null);
-        autowireFields(clazz, bean);
-        mapUrls(clazz);
+      if(frameworkUtils.isBeanable(className)){
+        Object bean = frameworkUtils.createObject(className);
         beanMap.put(className, bean);
+        mapUrls(className);
+      }
+    }
+    autowireFields(classes);
+  }
+
+  private void mapUrls(String className) throws ClassNotFoundException {
+    Class clazz = Class.forName(className);
+    if(Objects.nonNull(clazz.getAnnotation(Controller.class))){
+      Method[] methods = clazz.getDeclaredMethods();
+      for (Method method : methods) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        boolean isRequestMapped = (annotation != null);
+        if (isRequestMapped) {
+          List<Object> specification = new ArrayList<Object>();
+          Parameter[] params = method.getParameters();
+          String url = annotation.value();
+          String type = annotation.method().toString();
+          String key = url + "#" + type;
+          String value = clazz.getName() + "#" + method.getName();
+          specification.add(value);
+          specification.add(params);
+          urlMap.put(key, specification);
+        }
       }
     }
   }
 
-  private void mapUrls(Class clazz) {
-    Method[] methods = clazz.getDeclaredMethods();
-    for (Method method : methods) {
-      RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-      boolean isRequestMapped = (annotation != null);
-      if (isRequestMapped) {
-        List<Object> specification = new ArrayList<Object>();
-        Parameter[] params = method.getParameters();
-        String url = annotation.value();
-        String type = annotation.method().toString();
-        String key = url + "#" + type;
-        String value = clazz.getName() + "#" + method.getName();
-        specification.add(value);
-        specification.add(params);
-        urlMap.put(key, specification);
-      }
-    }
-  }
-
-  private void autowireFields(Class clazz, Object bean)
+  private void autowireFields(List<String> classes)
       throws InstantiationException, IllegalAccessException, IllegalArgumentException,
-      InvocationTargetException, NoSuchMethodException, SecurityException {
-    Field[] fields = clazz.getDeclaredFields();
-    for (Field field : fields) {
-      Autowired autowired = field.getAnnotation(Autowired.class);
-      boolean isAutowired = (autowired != null);
-      if (isAutowired) {
-        field.setAccessible(true);
-        Class fieldClass = field.getType();
-        Constructor classConstructor = fieldClass.getConstructor(null);
-        Object fieldBean = classConstructor.newInstance(null);
-        field.set(bean, fieldBean);
-      }
-    }
+      InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+        for(String className : classes){
+          Object bean = getBean(className);
+          Class clazz = Class.forName(className);
+          Field[] fields = clazz.getDeclaredFields();
+          for(Field field : fields){
+            field.setAccessible(true);
+            Autowired autowired = field.getAnnotation(Autowired.class);
+            if(Objects.nonNull(autowired) && frameworkUtils.isBeanable(className)){
+              field.set(bean, getBean(field.getType().getName()));
+            }
+          }
+        }
   }
 
   public HashMap<String, List<Object>> getUrlMap() {

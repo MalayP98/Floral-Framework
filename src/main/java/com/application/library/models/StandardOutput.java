@@ -2,6 +2,9 @@ package com.application.library.models;
 
 import java.util.Date;
 
+import com.dummyframework.annotations.Service;
+
+@Service
 public class StandardOutput {
 
   String status;
