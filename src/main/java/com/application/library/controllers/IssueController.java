@@ -2,8 +2,8 @@ package com.application.library.controllers;
 
 import java.util.Date;
 import java.util.List;
-import com.application.library.dao.BooksDao;
-import com.application.library.dao.UserDao;
+import com.application.library.dao.BooksService;
+import com.application.library.dao.UserService;
 import com.application.library.models.StandardOutput;
 import com.application.library.utils.Constants;
 import com.dummyframework.annotations.Autowired;
@@ -18,10 +18,10 @@ import com.dummyframework.utils.RequestMethod;
 public class IssueController {
 
   @Autowired
-  UserDao userDao;
+  UserService userService;
 
   @Autowired
-  BooksDao bookDao;
+  BooksService booksService;
 
   @Autowired
   StandardOutput standardOutput;
@@ -32,7 +32,7 @@ public class IssueController {
     canIssue = true;
     if (canIssue) {
       try {
-        bookDao.issuseBooks(books, Integer.parseInt((String) FrameworkSession.get("id")));
+        booksService.issuseBooks(books, Integer.parseInt((String) FrameworkSession.get("id")));
         standardOutput.setStatus(Constants.SUCCESS);
         standardOutput.setMessage("Book Issued.");
       } catch (Exception e) {
@@ -54,7 +54,7 @@ public class IssueController {
     canIssue = true;
     if (canIssue) {
       try {
-        bookDao.returnBook(books, Integer.parseInt((String) FrameworkSession.get("id")));
+        booksService.returnBook(books, Integer.parseInt((String) FrameworkSession.get("id")));
         standardOutput.setStatus(Constants.SUCCESS);
         standardOutput.setMessage("Book Returned.");
       } catch (Exception e) {

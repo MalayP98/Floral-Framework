@@ -3,7 +3,7 @@ package com.application.library.controllers;
 import static com.dummyframework.core.FrameworkSession.add;
 import java.util.Date;
 import java.util.List;
-import com.application.library.dao.UserDao;
+import com.application.library.dao.UserService;
 import com.application.library.models.LoginForm;
 import com.application.library.models.StandardOutput;
 import com.application.library.utils.Constants;
@@ -17,7 +17,7 @@ import com.dummyframework.utils.RequestMethod;
 public class LoginController {
 
   @Autowired
-  UserDao userDao;
+  UserService userService;
 
   @Autowired
   StandardOutput standardOutput;
@@ -28,8 +28,8 @@ public class LoginController {
     String password = loginForm.getPassword();
     String dbUsername = "";
     try {
-      dbUsername = userDao.getUsernameFromPassword(password);
-      List<Object> result = userDao.getRoleAndIdFromUsernameAndPassword(dbUsername, password);
+      dbUsername = userService.getUsernameFromPassword(password);
+      List<Object> result = userService.getRoleAndIdFromUsernameAndPassword(dbUsername, password);
       add("id", result.get(1));
       add("role", result.get(0));
     } catch (Exception e) {
