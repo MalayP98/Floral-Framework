@@ -11,7 +11,7 @@ import java.util.List;
 import com.application.library.models.Book;
 import com.application.library.utils.Utils;
 
-public class BooksDao {
+public class BooksService {
 
   public long addBook(Book book) {
     Connection connection = null;

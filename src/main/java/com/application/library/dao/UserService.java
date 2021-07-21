@@ -10,7 +10,7 @@ import java.util.List;
 import com.application.library.models.User;
 import com.application.library.utils.Utils;
 
-public class UserDao {
+public class UserService {
 
   public void closeAll(Connection connection, Statement statement, ResultSet resultSet)
       throws SQLException {

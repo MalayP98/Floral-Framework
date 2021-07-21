@@ -1,7 +1,7 @@
 package com.application.library.controllers;
 
 import java.util.Date;
-import com.application.library.dao.BooksDao;
+import com.application.library.dao.BooksService;
 import com.application.library.models.Book;
 import com.application.library.models.StandardOutput;
 import com.application.library.utils.Constants;
@@ -16,7 +16,7 @@ import com.dummyframework.utils.RequestMethod;
 public class BookController {
 
   @Autowired
-  BooksDao booksDao;
+  BooksService booksService;
 
   @Autowired
   StandardOutput standardOutput;
@@ -35,7 +35,7 @@ public class BookController {
       canAdd = verify();
       if (canAdd) {
         try {
-          booksDao.addBook(book);
+          booksService.addBook(book);
           standardOutput.setStatus(Constants.SUCCESS);
           standardOutput.setMessage("Book Added.");
         } catch (Exception e) {
