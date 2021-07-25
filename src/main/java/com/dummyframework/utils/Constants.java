@@ -41,6 +41,8 @@ public class Constants {
 
   public static final String ARRAY_CONTAINER = "|";
 
+  public static final String RESOLVE = "resolve";
+
   public static final int ZERO = 0;
 
   public static final int ONE = 1;

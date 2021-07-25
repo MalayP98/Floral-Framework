@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +14,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
+
+import com.dummyframework.annotations.ResponseBody;
 import com.dummyframework.exception.NoPatternMatchedException;
 
 public class FrameworkUtils {
@@ -22,6 +25,12 @@ public class FrameworkUtils {
   }
 
   public final List<Class> beanableAnnotationClasses = new ArrayList<>();
+
+  public boolean isResolvable(Object obj, Method method){
+    if(Objects.nonNull(obj.getClass().getAnnotation(ResponseBody.class))) return true;
+    else if(Objects.nonNull(method.getAnnotation(ResponseBody.class))) return true;
+    return false;
+  }
 
   public Object createObject(String className) throws ClassNotFoundException, NoSuchMethodException, 
     SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, 

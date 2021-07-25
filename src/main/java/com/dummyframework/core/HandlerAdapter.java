@@ -15,6 +15,7 @@ import com.dummyframework.annotations.RequestBody;
 import com.dummyframework.annotations.RequestMapping;
 import com.dummyframework.exception.AppContextException;
 import com.dummyframework.exception.NoPatternMatchedException;
+import com.dummyframework.utils.Constants;
 import com.dummyframework.utils.FrameworkUtils;
 import com.dummyframework.utils.ResolveParams;
 
@@ -22,10 +23,12 @@ public class HandlerAdapter {
 
   private WebApplicationContext context;
   private ResolveParams resolveParams;
+  private FrameworkUtils frameworkUtils;
 
-  public HandlerAdapter(WebApplicationContext context) {
+  public HandlerAdapter(WebApplicationContext context) throws ClassNotFoundException {
     this.context = context;
     this.resolveParams = new ResolveParams();
+    this.frameworkUtils = new FrameworkUtils();
   }
 
   public Object invokeMethod(HttpServletRequest request, HttpServletResponse response)
@@ -51,6 +54,7 @@ public class HandlerAdapter {
       return null;
     } else {
       Object returnValue = classMethod.invoke(classObject, inputParamArray);
+      request.setAttribute(Constants.RESOLVE, frameworkUtils.isResolvable(classObject, classMethod));
       return returnValue;
     }
 
