@@ -12,9 +12,11 @@ import com.dummyframework.annotations.Autowired;
 import com.dummyframework.annotations.Controller;
 import com.dummyframework.annotations.RequestBody;
 import com.dummyframework.annotations.RequestMapping;
+import com.dummyframework.annotations.ResponseBody;
 import com.dummyframework.utils.RequestMethod;
 
 @Controller
+@ResponseBody
 public class LoginController {
 
   @Autowired

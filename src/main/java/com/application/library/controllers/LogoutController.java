@@ -6,10 +6,12 @@ import com.application.library.utils.Constants;
 import com.dummyframework.annotations.Autowired;
 import com.dummyframework.annotations.Controller;
 import com.dummyframework.annotations.RequestMapping;
+import com.dummyframework.annotations.ResponseBody;
 import com.dummyframework.core.FrameworkSession;
 import com.dummyframework.utils.RequestMethod;
 
 @Controller
+@ResponseBody
 public class LogoutController {
 
   @Autowired
