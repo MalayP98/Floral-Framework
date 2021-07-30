@@ -1,7 +1,5 @@
-/.metadata/
-
-/.build/
-
-*/*.class
-
+*.class
+*.DS_Store
+build/
+.vscode
 
