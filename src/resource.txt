@@ -6,7 +6,11 @@ cd ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ && rm -rf app app.war &&
 mv ~/Work/Projects/Dummy-Framework/src/main/webapp/app.war ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ 
 cd ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ && jar -xvf app.war && cd
 
-#notes
+# notes
 
 all the param value of inputs should be given in lower-cases. For eg, book:("bookname"="Book2",  "author"="Author2",  "copies"=4, "isbn"="abcd1234")
 here param values like bookname, author, etc are all in lower cases.
+
+# request formats
+loginForm:("name"="username", "password"="password")
+array input -> books:(["Book1", "Book2"])

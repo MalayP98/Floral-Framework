@@ -86,7 +86,7 @@ public class FrameworkUtils {
   }
 
   private static Object getTagValue(String input) throws NoPatternMatchedException {
-    if (!input.startsWith(Constants.ARRAY_CONTAINER)) {
+    if (!input.startsWith(Constants.ARRAY_START)) {
       String[] values = input.split(Constants.PARAM_SEPRATOR);
       HashMap<String, Object> tagValueMap = new HashMap<String, Object>();
       for (String value : values) {
