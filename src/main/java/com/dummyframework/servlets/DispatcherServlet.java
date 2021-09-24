@@ -11,6 +11,7 @@ import com.dummyframework.core.DummyFramework;
 import com.dummyframework.core.FrameworkSession;
 import com.dummyframework.core.HandleResponse;
 import com.dummyframework.core.HandlerAdapter;
+import com.dummyframework.core.HandlerOperations;
 import com.dummyframework.core.WebApplicationContext;
 import com.dummyframework.exception.AppContextException;
 import com.dummyframework.utils.Constants;
@@ -24,33 +25,22 @@ public class DispatcherServlet extends HttpServlet {
   }
 
   @Override
-  protected void service(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
-    
+  protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
     FrameworkSession.setSession(request.getSession());
-    HandlerAdapter ha = null;
+    HandlerOperations ha = null;
     try {
-      ha = new HandlerAdapter(webApplicationContext);
-    } catch (ClassNotFoundException e1) {
+      ha = new HandlerOperations(webApplicationContext);
+    } catch (Exception e1) {
       e1.printStackTrace();
     }
     try {
-      Object object = ha.invokeMethod(request, response);
-      if (object != null) {
-        if(Objects.nonNull(request.getAttribute(Constants.RESOLVE)) && (Boolean)request.getAttribute(Constants.RESOLVE)){
-          Object responseObject = HandleResponse.handle(object, response.getContentType());
-          PrintWriter writer = response.getWriter();
-          writer.print(responseObject);
-        }
-        else{
-          throw new Exception();
-        }
-      }
+      Object object = ha.invoke(request, response);
+      PrintWriter writer = response.getWriter();
+      writer.print(object);
     } catch (Exception e) {
       System.out.println(e.getMessage());
       System.out.println(e.getStackTrace());
     }
   }
 }
-
-

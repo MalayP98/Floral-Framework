@@ -16,6 +16,7 @@ public class HandleResponse {
       HashMap<String, Object> fieldValues;
       fieldValues = getFieldValue(returnValue);
       JSONObject jsonObject = new JSONObject(fieldValues);
+      System.out.println(jsonObject.toString());
       return jsonObject;
     }
     return returnValue;

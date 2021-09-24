@@ -20,43 +20,49 @@ import com.dummyframework.exception.NoPatternMatchedException;
 
 public class FrameworkUtils {
 
-  public FrameworkUtils() throws ClassNotFoundException{
+  public FrameworkUtils() throws ClassNotFoundException {
     initBeanableAnnotationClasses();
   }
 
   public final List<Class> beanableAnnotationClasses = new ArrayList<>();
 
-  public boolean isResolvable(Object obj, Method method){
-    if(Objects.nonNull(obj.getClass().getAnnotation(ResponseBody.class))) return true;
-    else if(Objects.nonNull(method.getAnnotation(ResponseBody.class))) return true;
+  public boolean isResolvable(Object obj, Method method) {
+    if (Objects.nonNull(obj.getClass().getAnnotation(ResponseBody.class)))
+      return true;
+    else if (Objects.nonNull(method.getAnnotation(ResponseBody.class)))
+      return true;
     return false;
   }
 
-  public Object createObject(String className) throws ClassNotFoundException, NoSuchMethodException, 
-    SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, 
-    InvocationTargetException{
-    Class clazz = Class.forName(className);
-    Constructor constructor = clazz.getConstructor();
-    return constructor.newInstance();
+  public Object createObject(String className) throws ClassNotFoundException, NoSuchMethodException, SecurityException,
+      InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    Class<?> clazz = Class.forName(className);
+    return createObject(clazz);
   }
 
-  public boolean isBeanable(String className) throws ClassNotFoundException{
+  @SuppressWarnings("unchecked")
+  public <T> T createObject(Class<T> clazz) throws NoSuchMethodException, SecurityException, InstantiationException,
+      IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    Constructor<?> constructor = clazz.getConstructor();
+    return (T) constructor.newInstance();
+  }
+
+  public boolean isBeanable(String className) throws ClassNotFoundException {
     Class annotatedClass = Class.forName(className);
-    for(Class clazz : beanableAnnotationClasses){
-      if(Objects.nonNull(annotatedClass.getAnnotation(clazz))){
+    for (Class clazz : beanableAnnotationClasses) {
+      if (Objects.nonNull(annotatedClass.getAnnotation(clazz))) {
         return true;
       }
     }
     return false;
   }
 
-  public void initBeanableAnnotationClasses() throws ClassNotFoundException{
+  public void initBeanableAnnotationClasses() throws ClassNotFoundException {
     this.beanableAnnotationClasses.add(Class.forName("com.dummyframework.annotations.Controller"));
     this.beanableAnnotationClasses.add(Class.forName("com.dummyframework.annotations.Service"));
   }
 
-  public static String matchPattern(String str, String regex, int group)
-      throws NoPatternMatchedException {
+  public static String matchPattern(String str, String regex, int group) throws NoPatternMatchedException {
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(str);
     if (matcher.find()) {
@@ -94,8 +100,7 @@ public class FrameworkUtils {
         if (params_value[Constants.ZERO].equals(Constants.DOLLAR))
           return appropriateType(params_value[Constants.ONE]);
         else {
-          String paramName =
-              matchPattern(params_value[Constants.ZERO], Constants.REMOVE_QUOTED, Constants.ONE);
+          String paramName = matchPattern(params_value[Constants.ZERO], Constants.REMOVE_QUOTED, Constants.ONE);
           tagValueMap.put(paramName, appropriateType(params_value[Constants.ONE]));
         }
       }
