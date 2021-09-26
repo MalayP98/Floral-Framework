@@ -8,12 +8,11 @@ import com.dummyframework.annotations.ComponentScan;
 import com.dummyframework.exception.AppContextException;
 import com.dummyframework.exception.NoComponentScanException;
 
-
 public class DummyFramework {
 
   private static String ROOT_PACKAGE = null;
 
-  private static WebApplicationContext webApplicationContext = null;
+  private static WebApplicationContext applicationContext = null;
 
   public static void setRootPackage(String rootPackage) {
     ROOT_PACKAGE = rootPackage;
@@ -23,9 +22,9 @@ public class DummyFramework {
     return ROOT_PACKAGE;
   }
 
-  public static <T> void run(Class<T> clazz) throws IOException, NoComponentScanException,
-      ClassNotFoundException, IllegalArgumentException, IllegalAccessException,
-      NoSuchMethodException, SecurityException, InstantiationException, InvocationTargetException {
+  public static <T> void run(Class<T> clazz) throws IOException, NoComponentScanException, ClassNotFoundException,
+      IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException,
+      InstantiationException, InvocationTargetException, AppContextException {
     if (!isComponentScanPossible(clazz))
       throw new NoComponentScanException();
     String rootPackage = getScanningPackage(clazz);
@@ -51,14 +50,14 @@ public class DummyFramework {
   }
 
   private static void initContext(List<String> classes)
-      throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException,
+      throws ClassNotFoundException, AppContextException, IllegalArgumentException, IllegalAccessException,
       NoSuchMethodException, SecurityException, InstantiationException, InvocationTargetException {
-    webApplicationContext = new WebApplicationContext(classes);
+    applicationContext = new WebApplicationContext(classes);
   }
 
   public static WebApplicationContext getWebApplicationContext() throws AppContextException {
-    if (webApplicationContext != null)
-      return webApplicationContext;
+    if (applicationContext != null)
+      return applicationContext;
     throw new AppContextException();
   }
 }

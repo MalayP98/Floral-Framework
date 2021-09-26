@@ -3,7 +3,6 @@ package com.dummyframework.core;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 
 public class Request {
@@ -14,11 +13,10 @@ public class Request {
     private String method;
 
     public Request(HttpServletRequest request) throws IOException {
-        System.out.println("$$$$$$$$");
+        System.out.println("\n url is = " + request.getRequestURL());
+        System.out.println("\n uri is = " + request.getRequestURI());
         resolveURL(request.getRequestURI());
-        System.out.println("$$$$$$$$");
         this.payload = readPayload(request.getReader());
-        System.out.println("$$$$$$$$");
         this.method = request.getMethod();
     }
 
@@ -31,7 +29,6 @@ public class Request {
 
     private void resolveURL(String uri) {
         this.url = "";
-        System.out.println("url = " + uri);
         int i;
         for (i = 0; i < uri.length(); i++) {
             if (uri.charAt(i) == '/') {

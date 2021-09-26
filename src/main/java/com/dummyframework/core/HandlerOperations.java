@@ -22,13 +22,9 @@ public class HandlerOperations {
 
     public Object invoke(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ClassNotFoundException, ConverterException, ArrayBuilderException {
-        System.out.println("\n\n  inside invoke method ------ \n\n");
         Request requestInfo = new Request(request);
-        System.out.println("1111");
         HandlerDetails handlerDetails = getHandlerDetails(requestInfo);
-        System.out.println("2222" + (handlerDetails == null));
         Object[] params = getMethodParams(handlerDetails, requestInfo);
-        System.out.println("3333");
         return invoke(handlerDetails, params);
     }
 
@@ -48,22 +44,17 @@ public class HandlerOperations {
      */
     private Object[] getMethodParams(HandlerDetails details, Request request)
             throws ClassNotFoundException, ConverterException, ArrayBuilderException {
-        System.out.println("******1*******");
         System.out.println(details);
         Method calledMethod = details.getCalledMethod();
         Parameter[] params = calledMethod.getParameters();
         Object[] objects = new Object[params.length];
-        System.out.println("******2****");
         for (int i = 0; i < params.length; i++) {
             System.out.println(params[i].getName());
             RequestBody annotation = params[i].getAnnotation(RequestBody.class);
             boolean isRequestBody = (annotation != null);
             if (isRequestBody) {
-                System.out.println("is request body");
                 TypeInfo info = new TypeInfo(params[i].getParameterizedType());
-                System.out.println("\n converter used is " + info.getConverter().getClass().getName() + "\n\n");
                 Converter converter = info.getConverter();
-                System.out.println(" \n\n payload is = " + request.getPayload() + " \n\n");
                 objects[i] = converter.convert(info, request.getPayload());
             } else
                 objects[i] = null;
