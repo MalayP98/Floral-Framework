@@ -2,22 +2,15 @@ package com.dummyframework.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.dummyframework.core.DummyFramework;
+
 import com.dummyframework.core.FrameworkSession;
-import com.dummyframework.core.HandlerOperations;
-import com.dummyframework.core.WebApplicationContext;
-import com.dummyframework.exception.AppContextException;
+import com.dummyframework.core.handler.HandlerOperations;
 
 public class DispatcherServlet extends HttpServlet {
-
-  private WebApplicationContext webApplicationContext;
-
-  public DispatcherServlet() throws AppContextException {
-    webApplicationContext = DummyFramework.getWebApplicationContext();
-  }
 
   @Override
   protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -25,9 +18,9 @@ public class DispatcherServlet extends HttpServlet {
     FrameworkSession.setSession(request.getSession());
     HandlerOperations ha = null;
     try {
-      ha = new HandlerOperations(webApplicationContext);
+      ha = new HandlerOperations();
     } catch (Exception e1) {
-      e1.printStackTrace();
+      System.out.println(e1.getStackTrace());
     }
     try {
       Object object = ha.invoke(request, response);
@@ -35,7 +28,7 @@ public class DispatcherServlet extends HttpServlet {
       writer.print(object);
     } catch (Exception e) {
       System.out.println(e.getMessage());
-      System.out.println(e.getStackTrace());
+      e.printStackTrace();
     }
   }
 }

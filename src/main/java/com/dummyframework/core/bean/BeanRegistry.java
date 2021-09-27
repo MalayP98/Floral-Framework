@@ -1,4 +1,4 @@
-package com.dummyframework.core;
+package com.dummyframework.core.bean;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ public class BeanRegistry {
     private BeanRegistry() {
     }
 
-    private Map<String, Bean> register = new HashMap<>();
+    private static Map<String, Bean> register = new HashMap<>();
 
     public static BeanRegistry getInstance() {
         if (INSTANCE == null) {

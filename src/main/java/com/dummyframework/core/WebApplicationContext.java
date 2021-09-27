@@ -11,6 +11,8 @@ import com.dummyframework.annotations.Autowired;
 import com.dummyframework.annotations.Controller;
 import com.dummyframework.annotations.RequestMapping;
 import com.dummyframework.annotations.ResponseBody;
+import com.dummyframework.core.handler.HandlerDetails;
+import com.dummyframework.core.handler.HandlerDetailsBuilder;
 import com.dummyframework.utils.FrameworkUtils;
 
 public class WebApplicationContext {

@@ -1,4 +1,4 @@
-package com.dummyframework.core;
+package com.dummyframework.core.handler;
 
 import java.lang.reflect.Method;
 

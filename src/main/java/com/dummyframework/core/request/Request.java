@@ -1,4 +1,4 @@
-package com.dummyframework.core;
+package com.dummyframework.core.request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,27 +27,35 @@ public class Request {
         return payload;
     }
 
+    // need fix, no '?' present in uri
     private void resolveURL(String uri) {
         this.url = "";
-        int i;
-        for (i = 0; i < uri.length(); i++) {
-            if (uri.charAt(i) == '/') {
-                if (i + 1 < uri.length() && uri.charAt(i + 1) == '?') {
-                    this.url = uri.substring(0, i);
-                    i++;
-                    break;
-                }
-            }
-            if (uri.charAt(i) == '?') {
-                this.url = uri.substring(0, i);
-                break;
-            }
-        }
-        if (this.url.isEmpty()) {
+        char lastChar = uri.charAt(uri.length() - 1);
+        if (lastChar == '/') {
+            this.url = uri.substring(0, uri.length() - 1);
+        } else {
             this.url = uri;
         }
-        String paramsString = (i + 1 < uri.length()) ? uri.substring(i + 1) : "";
-        resolveQueryParams(paramsString);
+        // this.url = "";
+        // int i;
+        // for (i = 0; i < uri.length(); i++) {
+        // if (uri.charAt(i) == '/') {
+        // if (i + 1 < uri.length() && uri.charAt(i + 1) == '?') {
+        // this.url = uri.substring(0, i);
+        // i++;
+        // break;
+        // }
+        // }
+        // if (uri.charAt(i) == '?') {
+        // this.url = uri.substring(0, i);
+        // break;
+        // }
+        // }
+        // if (this.url.isEmpty()) {
+        // this.url = uri;
+        // }
+        // String paramsString = (i + 1 < uri.length()) ? uri.substring(i + 1) : "";
+        // resolveQueryParams(paramsString);
     }
 
     private void resolveQueryParams(String params) {

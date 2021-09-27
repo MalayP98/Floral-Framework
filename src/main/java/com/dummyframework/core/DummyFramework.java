@@ -12,7 +12,7 @@ public class DummyFramework {
 
   private static String ROOT_PACKAGE = null;
 
-  private static WebApplicationContext applicationContext = null;
+  private static ApplicationContext applicationContext = null;
 
   public static void setRootPackage(String rootPackage) {
     ROOT_PACKAGE = rootPackage;
@@ -52,10 +52,10 @@ public class DummyFramework {
   private static void initContext(List<String> classes)
       throws ClassNotFoundException, AppContextException, IllegalArgumentException, IllegalAccessException,
       NoSuchMethodException, SecurityException, InstantiationException, InvocationTargetException {
-    applicationContext = new WebApplicationContext(classes);
+    applicationContext = new ApplicationContext(classes);
   }
 
-  public static WebApplicationContext getWebApplicationContext() throws AppContextException {
+  public static ApplicationContext getWebApplicationContext() throws AppContextException {
     if (applicationContext != null)
       return applicationContext;
     throw new AppContextException();

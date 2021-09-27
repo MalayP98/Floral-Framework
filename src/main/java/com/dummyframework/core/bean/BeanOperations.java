@@ -1,12 +1,12 @@
-package com.dummyframework.core;
+package com.dummyframework.core.bean;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.dummyframework.annotations.Config;
 import com.dummyframework.annotations.Dependency;
+import com.dummyframework.core.AutowireHelper;
 import com.dummyframework.exception.BeanRegistryException;
 
 public class BeanOperations extends BeanGenerator {
@@ -25,13 +25,18 @@ public class BeanOperations extends BeanGenerator {
     }
 
     private void runDependencyMethods(Bean bean) throws BeanRegistryException {
-        Class<?> clazz = bean.getClass();
-        Method[] methods = clazz.getMethods();
+        Class<?> clazz = bean.getClazz();
+        Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
+            // System.out.println("method name --> " + method.getName());
+            // System.out.println("app count --> " + method.getAnnotations().length);
+            // System.out.println("class ann --> " + clazz.getAnnotation(Config.class));
             if (method.isAnnotationPresent(Dependency.class)) {
                 registry.addBean(createBeanWithoutCheck(method, bean.getBean()));
             } else if (method.getAnnotations().length == 0 && clazz.isAnnotationPresent(Config.class)) {
                 try {
+                    System.out.println("\n invoking " + method.getName() + "\n");
+                    System.out.println(bean.getBean());
                     method.invoke(bean.getBean());
                 } catch (Exception e) {
                     // TODO : cannot run method <method name>.
@@ -42,6 +47,7 @@ public class BeanOperations extends BeanGenerator {
 
     public void registerBean(List<Class<?>> scannedClasses)
             throws IllegalArgumentException, IllegalAccessException, BeanRegistryException {
+        System.out.println("\n\n Registering bean......");
         List<Class<?>> beanableClasses = getBeanableClasses(scannedClasses);
         List<Bean> beans = new ArrayList<>();
         for (Class<?> beanClass : beanableClasses) {

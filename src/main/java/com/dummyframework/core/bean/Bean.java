@@ -1,4 +1,4 @@
-package com.dummyframework.core;
+package com.dummyframework.core.bean;
 
 public class Bean {
 

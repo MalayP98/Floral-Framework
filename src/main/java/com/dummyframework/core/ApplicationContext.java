@@ -3,16 +3,20 @@ package com.dummyframework.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dummyframework.core.bean.BeanOperations;
+import com.dummyframework.core.request.RequestResolver;
 import com.dummyframework.exception.AppContextException;
 
 public class ApplicationContext {
 
     BeanOperations beanOperations = new BeanOperations();
+    RequestResolver requestResolver = new RequestResolver();
 
     public ApplicationContext(List<String> scannedClasses) throws ClassNotFoundException, AppContextException {
         List<Class<?>> classes = getClasses(scannedClasses);
         try {
             beanOperations.registerBean(classes);
+            requestResolver.resolve(classes);
         } catch (Exception e) {
             throw new AppContextException("Cannot start App Context.");
         }

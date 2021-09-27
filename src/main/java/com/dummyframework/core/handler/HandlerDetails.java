@@ -1,4 +1,4 @@
-package com.dummyframework.core;
+package com.dummyframework.core.handler;
 
 import java.lang.reflect.Method;
 
@@ -35,4 +35,5 @@ public class HandlerDetails {
         return "HandlerDetails [atResponseBody=" + atResponseBody + ", calledMethod=" + calledMethod + ", component="
                 + component + "]";
     }
+
 }

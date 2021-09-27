@@ -1,4 +1,4 @@
-package com.dummyframework.core;
+package com.dummyframework.core.bean;
 
 import java.lang.reflect.Method;
 import com.dummyframework.annotations.Config;
@@ -20,6 +20,7 @@ public class BeanGenerator {
 
     // no check need for extension class like BeanOperation
     protected Bean createBeanWithoutCheck(Class<?> clazz) {
+        System.out.println("\n creating bean with name " + clazz.getSimpleName().toLowerCase());
         BeanBuilder builder = new BeanBuilder();
         builder.setBean(createObject(clazz));
         builder.setClazz(clazz);
@@ -61,7 +62,7 @@ public class BeanGenerator {
 
     protected Object createObject(Class<?> clazz) {
         try {
-            return clazz.getConstructor();
+            return clazz.getConstructor().newInstance();
         } catch (Exception e) {
             e.getStackTrace();
         }

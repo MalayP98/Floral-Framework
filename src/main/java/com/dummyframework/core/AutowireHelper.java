@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import com.dummyframework.annotations.Autowired;
+import com.dummyframework.core.bean.Bean;
+import com.dummyframework.core.bean.BeanRegistry;
 
 public class AutowireHelper {
 
