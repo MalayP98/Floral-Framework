@@ -16,7 +16,7 @@ public class BeanRegistry {
 
     public static BeanRegistry getInstance() {
         if (INSTANCE == null) {
-            return new BeanRegistry();
+            INSTANCE = new BeanRegistry();
         }
         return INSTANCE;
     }
@@ -30,7 +30,11 @@ public class BeanRegistry {
         }
     }
 
+    public Bean getSimpleBean(String beanName) {
+        return register.get(beanName);
+    }
+
     public Object getBean(String beanName) {
-        return register.get(beanName).getBean();
+        return getSimpleBean(beanName).getBean();
     }
 }

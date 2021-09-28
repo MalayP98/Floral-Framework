@@ -20,7 +20,6 @@ public class BeanGenerator {
 
     // no check need for extension class like BeanOperation
     protected Bean createBeanWithoutCheck(Class<?> clazz) {
-        System.out.println("\n creating bean with name " + clazz.getSimpleName().toLowerCase());
         BeanBuilder builder = new BeanBuilder();
         builder.setBean(createObject(clazz));
         builder.setClazz(clazz);

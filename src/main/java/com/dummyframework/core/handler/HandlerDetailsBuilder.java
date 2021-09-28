@@ -2,17 +2,19 @@ package com.dummyframework.core.handler;
 
 import java.lang.reflect.Method;
 
+import com.dummyframework.core.bean.Bean;
+
 public class HandlerDetailsBuilder {
 
-    private Object component;
+    private Bean component;
     private Method calledMethod;
     private boolean atResponseBody;
 
-    public Object getComponent() {
+    public Bean getComponent() {
         return component;
     }
 
-    public void setComponent(Object component) {
+    public void setComponent(Bean component) {
         this.component = component;
     }
 

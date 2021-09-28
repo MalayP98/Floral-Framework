@@ -35,7 +35,6 @@ public class BeanOperations extends BeanGenerator {
                 registry.addBean(createBeanWithoutCheck(method, bean.getBean()));
             } else if (method.getAnnotations().length == 0 && clazz.isAnnotationPresent(Config.class)) {
                 try {
-                    System.out.println("\n invoking " + method.getName() + "\n");
                     System.out.println(bean.getBean());
                     method.invoke(bean.getBean());
                 } catch (Exception e) {
@@ -47,11 +46,11 @@ public class BeanOperations extends BeanGenerator {
 
     public void registerBean(List<Class<?>> scannedClasses)
             throws IllegalArgumentException, IllegalAccessException, BeanRegistryException {
-        System.out.println("\n\n Registering bean......");
         List<Class<?>> beanableClasses = getBeanableClasses(scannedClasses);
         List<Bean> beans = new ArrayList<>();
         for (Class<?> beanClass : beanableClasses) {
             Bean bean = createBeanWithoutCheck(beanClass);
+            registry.addBean(bean);
             // @Dependency methods also return bean, thus a part of bean registry.
             runDependencyMethods(bean);
             beans.add(bean);

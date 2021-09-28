@@ -13,8 +13,6 @@ public class Request {
     private String method;
 
     public Request(HttpServletRequest request) throws IOException {
-        System.out.println("\n url is = " + request.getRequestURL());
-        System.out.println("\n uri is = " + request.getRequestURI());
         resolveURL(request.getRequestURI());
         this.payload = readPayload(request.getReader());
         this.method = request.getMethod();
@@ -36,26 +34,6 @@ public class Request {
         } else {
             this.url = uri;
         }
-        // this.url = "";
-        // int i;
-        // for (i = 0; i < uri.length(); i++) {
-        // if (uri.charAt(i) == '/') {
-        // if (i + 1 < uri.length() && uri.charAt(i + 1) == '?') {
-        // this.url = uri.substring(0, i);
-        // i++;
-        // break;
-        // }
-        // }
-        // if (uri.charAt(i) == '?') {
-        // this.url = uri.substring(0, i);
-        // break;
-        // }
-        // }
-        // if (this.url.isEmpty()) {
-        // this.url = uri;
-        // }
-        // String paramsString = (i + 1 < uri.length()) ? uri.substring(i + 1) : "";
-        // resolveQueryParams(paramsString);
     }
 
     private void resolveQueryParams(String params) {

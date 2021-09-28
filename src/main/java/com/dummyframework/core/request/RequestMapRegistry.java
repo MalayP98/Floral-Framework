@@ -15,7 +15,7 @@ public class RequestMapRegistry {
 
     public static RequestMapRegistry getInstance() {
         if (INSTANCE == null) {
-            return new RequestMapRegistry();
+            INSTANCE = new RequestMapRegistry();
         }
         return INSTANCE;
     }
@@ -23,9 +23,7 @@ public class RequestMapRegistry {
     private static Map<String, HandlerDetails> urlRegistry = new HashMap<>();
 
     public void add(String url, RequestMethod method, HandlerDetails details) {
-        System.out.println("mapping " + generateKey(url, method.toString()) + " --> " + details.toString());
         urlRegistry.put(generateKey(url, method.toString()), details);
-        System.out.println(urlRegistry.size() + " \n");
     }
 
     public void add(String url, String method, HandlerDetails details) {
@@ -33,15 +31,7 @@ public class RequestMapRegistry {
     }
 
     public HandlerDetails get(String url, String method) {
-
-        System.out.println("***** " + urlRegistry.size());
-
-        for (Map.Entry<String, HandlerDetails> set : urlRegistry.entrySet()) {
-            System.out.println(set.getKey() + " --> " + set.getValue());
-        }
-
         String key = generateKey(url, method);
-        System.out.println("getting --> " + key + " --> is present " + urlRegistry.containsKey(key));
         // throw error here.
         if (!urlRegistry.containsKey(key)) {
             return null;

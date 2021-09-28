@@ -22,17 +22,18 @@ public class HandlerOperations {
             throws IOException, ClassNotFoundException, ConverterException, ArrayBuilderException {
         Request requestInfo = new Request(request);
         HandlerDetails handlerDetails = getHandlerDetails(requestInfo);
-        System.out.println("handler detail --> " + handlerDetails);
         Object[] params = getMethodParams(handlerDetails, requestInfo);
         return invoke(handlerDetails, params);
     }
 
-    public Object invoke(HandlerDetails handlerDetails, Object[] objects) {
+    public Object invoke(HandlerDetails handlerDetails, Object[] params) {
         Object result = null;
         try {
-            result = handlerDetails.getCalledMethod().invoke(handlerDetails.getComponent(), objects);
+            Method method = handlerDetails.getCalledMethod();
+            Object object = handlerDetails.getComponent().getBean();
+            result = method.invoke(object, params);
         } catch (Exception e) {
-            // Add logger for exception.
+            e.printStackTrace();
         }
         return result;
     }
@@ -43,16 +44,13 @@ public class HandlerOperations {
      */
     private Object[] getMethodParams(HandlerDetails details, Request request)
             throws ClassNotFoundException, ConverterException, ArrayBuilderException {
-        System.out.println(details);
         Method calledMethod = details.getCalledMethod();
         Parameter[] params = calledMethod.getParameters();
         Object[] objects = new Object[params.length];
         for (int i = 0; i < params.length; i++) {
-            System.out.println("\n param name --> " + params[i].getType().getName());
             RequestBody annotation = params[i].getAnnotation(RequestBody.class);
             boolean isRequestBody = (annotation != null);
             if (isRequestBody) {
-                System.out.println("param --> " + params[i].getType().getName() + "has requestbody annotation");
                 TypeInfo info = new TypeInfo(params[i].getParameterizedType());
                 Converter converter = info.getConverter();
                 objects[i] = converter.convert(info, request.getPayload());
@@ -64,7 +62,6 @@ public class HandlerOperations {
     }
 
     private HandlerDetails getHandlerDetails(Request requestInfo) {
-        System.out.println("\n\n --> " + requestInfo.getUrl());
         return registry.get(requestInfo);
     }
 

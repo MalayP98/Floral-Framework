@@ -2,9 +2,11 @@ package com.dummyframework.core.handler;
 
 import java.lang.reflect.Method;
 
+import com.dummyframework.core.bean.Bean;
+
 public class HandlerDetails {
 
-    private final Object component;
+    private final Bean component;
     private final Method calledMethod;
     private final boolean atResponseBody;;
 
@@ -14,7 +16,7 @@ public class HandlerDetails {
         this.atResponseBody = builder.getAtResponseBody();
     }
 
-    public Object getComponent() {
+    public Bean getComponent() {
         return component;
     }
 
@@ -29,11 +31,4 @@ public class HandlerDetails {
     public boolean atResponseBody() {
         return this.atResponseBody;
     }
-
-    @Override
-    public String toString() {
-        return "HandlerDetails [atResponseBody=" + atResponseBody + ", calledMethod=" + calledMethod + ", component="
-                + component + "]";
-    }
-
 }

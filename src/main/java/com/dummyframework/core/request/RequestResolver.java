@@ -6,33 +6,38 @@ import com.dummyframework.annotations.Controller;
 import com.dummyframework.annotations.RequestMapping;
 import com.dummyframework.annotations.ResponseBody;
 import com.dummyframework.core.Properties;
+import com.dummyframework.core.bean.Bean;
+import com.dummyframework.core.bean.BeanRegistry;
 import com.dummyframework.core.handler.HandlerDetails;
 import com.dummyframework.core.handler.HandlerDetailsBuilder;
 
 public class RequestResolver {
 
-    RequestMapRegistry registry = RequestMapRegistry.getInstance();
+    RequestMapRegistry requestMapRegistry = RequestMapRegistry.getInstance();
+    BeanRegistry beanRegistry = BeanRegistry.getInstance();
 
     private String APP_NAME = "APP_NAME";
 
     public void resolve(List<Class<?>> classes) {
         for (Class<?> clazz : classes) {
             if (clazz.isAnnotationPresent(Controller.class)) {
-                addMappedMethods(clazz);
+                addMappedMethods(beanRegistry.getSimpleBean(clazz.getSimpleName().toLowerCase()));
             }
         }
     }
 
-    private void addMappedMethods(Class<?> clazz) {
+    private void addMappedMethods(Bean bean) {
+        Class<?> clazz = bean.getClazz();
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 HandlerDetailsBuilder details = new HandlerDetailsBuilder();
-                details.setComponent(method.getDeclaringClass());
+                details.setComponent(bean);
                 details.setCalledMethod(method);
                 details.setAtResponseBody(method.isAnnotationPresent(ResponseBody.class));
-                registry.add(addAppName(requestMapping.value()), requestMapping.method(), new HandlerDetails(details));
+                requestMapRegistry.add(addAppName(requestMapping.value()), requestMapping.method(),
+                        new HandlerDetails(details));
             }
         }
     }
