@@ -26,7 +26,7 @@ public class LoginController {
   StandardOutput standardOutput;
 
   @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
-  public StandardOutput login(@RequestBody(tag = "loginForm") LoginForm loginForm) {
+  public String login(@RequestBody(tag = "loginForm") LoginForm loginForm) {
     String username = loginForm.getName();
     String password = loginForm.getPassword();
     String dbUsername = "";
@@ -47,6 +47,6 @@ public class LoginController {
       standardOutput.setMessage("Invalid credentials.");
     }
     standardOutput.setDate(new Date());
-    return standardOutput;
+    return standardOutput.toString();
   }
 }
