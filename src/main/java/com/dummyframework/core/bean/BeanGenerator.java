@@ -5,9 +5,11 @@ import com.dummyframework.annotations.Config;
 import com.dummyframework.annotations.Controller;
 import com.dummyframework.annotations.Dependency;
 import com.dummyframework.annotations.Service;
+import com.dummyframework.logger.Logger;
 
 public class BeanGenerator {
 
+    Logger logger = new Logger(BeanGenerator.class);
     protected final Class<?>[] beanableAnnotations = { Config.class, Controller.class, Service.class };
 
     // creating bean for classes with beanable annotations
@@ -25,6 +27,7 @@ public class BeanGenerator {
         builder.setClazz(clazz);
         // beanable annotation have names of their classes
         builder.setBeanName(clazz.getSimpleName().toLowerCase());
+        logger.info("Creating bean with name \"" + clazz.getSimpleName().toLowerCase() + "\"");
         return new Bean(builder);
     }
 

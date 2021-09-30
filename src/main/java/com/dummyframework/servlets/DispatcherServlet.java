@@ -20,7 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     try {
       ha = new HandlerOperations();
     } catch (Exception e1) {
-      System.out.println(e1.getStackTrace());
+      e1.printStackTrace();
     }
     try {
       Object object = ha.invoke(request, response);

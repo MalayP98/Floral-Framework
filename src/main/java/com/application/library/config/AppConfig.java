@@ -7,7 +7,6 @@ import com.dummyframework.core.Properties;
 public class AppConfig {
 
     public void setAppName() {
-        System.out.println(" \n\n setting property");
         Properties.set("APP_NAME", "app");
     }
 
