@@ -6,6 +6,7 @@ import java.lang.reflect.Parameter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.dummyframework.annotations.RequestBody;
 import com.dummyframework.core.request.Request;
 import com.dummyframework.core.request.RequestMapRegistry;
@@ -13,14 +14,17 @@ import com.dummyframework.deserialize.TypeInfo;
 import com.dummyframework.deserialize.builders.ArrayBuilderException;
 import com.dummyframework.deserialize.converters.Converter;
 import com.dummyframework.deserialize.converters.ConverterException;
+import com.dummyframework.logger.Logger;
 
 public class HandlerOperations {
 
     RequestMapRegistry registry = RequestMapRegistry.getInstance();
+    Logger logger = new Logger(HandlerOperations.class);
 
     public Object invoke(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ClassNotFoundException, ConverterException, ArrayBuilderException {
         Request requestInfo = new Request(request);
+        logger.info("Incoming request for " + requestInfo.getUrl() + "#" + requestInfo.getMethod());
         HandlerDetails handlerDetails = getHandlerDetails(requestInfo);
         Object[] params = getMethodParams(handlerDetails, requestInfo);
         return invoke(handlerDetails, params);
@@ -31,6 +35,7 @@ public class HandlerOperations {
         try {
             Method method = handlerDetails.getCalledMethod();
             Object object = handlerDetails.getComponent().getBean();
+            logger.info("Invoking method \"" + method.getName() + "\"");
             result = method.invoke(object, params);
         } catch (Exception e) {
             e.printStackTrace();
