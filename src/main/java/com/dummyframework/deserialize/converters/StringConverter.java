@@ -8,6 +8,7 @@ public class StringConverter implements Converter {
 
     @Override
     public Object convert(TypeInfo info, String content) throws ConverterException {
+        logger.info("Converting \"" + content + "\" to String.class");
         return utils.removeQuotes(content);
     }
 }

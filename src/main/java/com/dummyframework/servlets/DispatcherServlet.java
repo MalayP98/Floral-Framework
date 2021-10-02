@@ -9,8 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.dummyframework.core.FrameworkSession;
 import com.dummyframework.core.handler.HandlerOperations;
+import com.dummyframework.logger.Logger;
 
 public class DispatcherServlet extends HttpServlet {
+
+  Logger logger = new Logger(DispatcherServlet.class);
 
   @Override
   protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -27,7 +30,7 @@ public class DispatcherServlet extends HttpServlet {
       PrintWriter writer = response.getWriter();
       writer.print(object);
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      logger.error(e.getMessage());
       e.printStackTrace();
     }
   }

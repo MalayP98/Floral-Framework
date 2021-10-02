@@ -9,6 +9,7 @@ public class PrimitiveConverter implements Converter {
     @Override
     public Object convert(TypeInfo info, String content) throws ConverterException {
         Class<?> clazz = info.getResolvedClass();
+        logger.info("Converting \"" + content + "\" to " + clazz.getSimpleName());
         if (clazz.isAssignableFrom(int.class)) {
             return Integer.parseInt(content);
         }

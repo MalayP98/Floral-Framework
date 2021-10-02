@@ -34,6 +34,7 @@ public class SimpleObjectConverter implements Converter {
 
     @Override
     public Object convert(TypeInfo info, String content) throws ConverterException, ArrayBuilderException {
+        logger.info("Cnverting \"" + content + "\" to " + info.getResolvedClass().getSimpleName() + ".class");
         Map<String, String> fieldValues = separator.toMap(removeParenthesis(content));
         return populateObject(info.getResolvedClass(), fieldValues);
     }

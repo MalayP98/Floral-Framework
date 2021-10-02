@@ -8,6 +8,7 @@ public class CharacterConverter implements Converter {
 
     @Override
     public Object convert(TypeInfo info, String content) throws ConverterException {
+        logger.info("Converting \"" + content + "\" Character");
         return Character.valueOf(stringToChar(content));
     }
 

@@ -25,6 +25,7 @@ public class MapConverter implements Converter {
 
     @Override
     public Object convert(TypeInfo info, String content) throws ConverterException, ArrayBuilderException {
+        logger.info("Converting \"" + content + "\" to " + info.getResolvedClass().getSimpleName());
         MapBuilder builder = new MapBuilder();
         Map<String, String> keyValue = separator.toMap(removeParenthesis(content));
         return builder.build(info, keyValue);

@@ -15,6 +15,7 @@ public class ArrayConverter implements Converter {
 
     @Override
     public Object convert(TypeInfo info, String content) throws ConverterException, ArrayBuilderException {
+        logger.info("Converting \"" + content + "\" to " + info.getResolvedClass().getSimpleName() + "[]");
         ArrayBuilder builder = ResolveBuilder.selectBuilder(info);
         return builder.build(info, parseContent(content));
     }
