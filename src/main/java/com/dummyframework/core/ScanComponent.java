@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ScanComponent {
 
-  public static String modifyPackage(String packageName, File directory) {
+  private static String modifyPackage(String packageName, File directory) {
     String[] path = directory.toString().split("/");
     StringBuilder newPackage = new StringBuilder(packageName);
     newPackage.append("." + path[path.length - 1]);
@@ -26,8 +26,7 @@ public class ScanComponent {
         if (file.isDirectory())
           classes.addAll(findClasses(file, packageName, true));
         else if (file.getName().endsWith(".class")) {
-          String className =
-              packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
+          String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
           classes.add(className);
         }
       }
@@ -35,7 +34,7 @@ public class ScanComponent {
     return classes;
   }
 
-  static List<String> startComponentScan(String rootPackage) throws IOException {
+  public static List<String> startComponentScan(String rootPackage) throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     String path = rootPackage.replace('.', '/');
     Enumeration<URL> resources = classLoader.getResources(path);
