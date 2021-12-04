@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ScanComponent {
 
@@ -26,7 +28,8 @@ public class ScanComponent {
         if (file.isDirectory())
           classes.addAll(findClasses(file, packageName, true));
         else if (file.getName().endsWith(".class")) {
-          String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
+          String className =
+              packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
           classes.add(className);
         }
       }
@@ -34,7 +37,7 @@ public class ScanComponent {
     return classes;
   }
 
-  public static List<String> startComponentScan(String rootPackage) throws IOException {
+  public static Set<String> startComponentScan(String rootPackage) throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     String path = rootPackage.replace('.', '/');
     Enumeration<URL> resources = classLoader.getResources(path);
@@ -43,7 +46,7 @@ public class ScanComponent {
       URL resource = resources.nextElement();
       directories.add(new File(resource.getFile()));
     }
-    List<String> classes = new ArrayList<String>();
+    Set<String> classes = new TreeSet<String>();
     for (File directory : directories) {
       classes.addAll(findClasses(directory, rootPackage, false));
     }

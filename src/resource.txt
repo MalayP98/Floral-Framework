@@ -1,6 +1,5 @@
 # compilation command
 javac -cp ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/lib/\* ~/Work/Projects/Dummy-Framework/src/main/java/com/**/*.java -d ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/classes
-
 javac -cp ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/classes/:Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/lib/\*  ~/Work/Projects/Dummy-Framework/src/main/java/com/**/*.java -d  ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/classes 
 
 rm -rf ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/app

@@ -1,40 +1,38 @@
 package com.dummyframework.core;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.dummyframework.core.bean.BeanOperations;
-import com.dummyframework.core.request.RequestResolver;
+import java.util.Set;
+import com.dummyframework.core.bean.Reader;
 import com.dummyframework.exception.AppContextException;
 import com.dummyframework.logger.Logger;
 
 public class ApplicationContext {
 
-    Logger logger = new Logger(ApplicationContext.class);
-    BeanOperations beanOperations = new BeanOperations();
-    RequestResolver requestResolver = new RequestResolver();
+  private Logger logger = new Logger(ApplicationContext.class);
+  private Reader reader = new Reader();
 
-    public ApplicationContext(List<String> scannedClasses) throws ClassNotFoundException, AppContextException {
-        List<Class<?>> classes = getClasses(scannedClasses);
-        try {
-            beanOperations.registerBean(classes);
-            requestResolver.resolve(classes);
-            logger.info("Application Context started.");
-        } catch (Exception e) {
-            throw new AppContextException("Cannot start App Context.");
-        }
-    }
+  public ApplicationContext(Set<String> scannedClasses)
+      throws ClassNotFoundException, AppContextException {
 
-    private List<Class<?>> getClasses(List<String> scannedClass) throws ClassNotFoundException {
-        List<Class<?>> classes = new ArrayList<>();
-        for (String className : scannedClass) {
-            classes.add(toClass(className));
-        }
-        return classes;
+    Set<Class<?>> classes = getClasses(scannedClasses);
+    try {
+      logger.info("Application Context started.");
+    } catch (Exception e) {
+      throw new AppContextException("Cannot start App Context.");
     }
+  }
 
-    private Class<?> toClass(String className) throws ClassNotFoundException {
-        return Class.forName(className);
+  private Set<Class<?>> getClasses(Set<String> scannedClass) throws ClassNotFoundException {
+    Set<Class<?>> classes = new HashSet<>();
+    for (String className : scannedClass) {
+      classes.add(toClass(className));
     }
+    return classes;
+  }
+
+  private Class<?> toClass(String className) throws ClassNotFoundException {
+    return Class.forName(className);
+  }
 
 }
