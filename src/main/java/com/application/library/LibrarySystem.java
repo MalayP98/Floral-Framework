@@ -10,7 +10,8 @@ import com.dummyframework.exception.NoComponentScanException;
 @ComponentScan
 public class LibrarySystem {
 
-  public static void main(String[] args) throws IOException, NoComponentScanException, ClassNotFoundException,
+  public static void main(String[] args)
+      throws IOException, NoComponentScanException, ClassNotFoundException,
       IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException,
       InstantiationException, InvocationTargetException, AppContextException {
     DummyFramework.run(LibrarySystem.class);

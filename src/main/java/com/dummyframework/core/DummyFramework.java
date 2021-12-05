@@ -37,10 +37,11 @@ public class DummyFramework {
     setRootPackage(rootPackage);
     logger.info("Starting Component Scan.");
     Set<String> classes = ScanComponent.startComponentScan(ROOT_PACKAGE);
+    logger.info("Component scan completed successfully.");
     initContext(classes);
   }
 
-  public static String getScanningPackage(Class clazz) {
+  public static String getScanningPackage(Class<?> clazz) {
     ComponentScan annotation = (ComponentScan) clazz.getAnnotation(ComponentScan.class);
     String packageName = annotation.packageName();
     if (packageName.equals(""))
@@ -48,7 +49,7 @@ public class DummyFramework {
     return packageName;
   }
 
-  private static boolean isComponentScanPossible(Class clazz) {
+  private static boolean isComponentScanPossible(Class<?> clazz) {
     @SuppressWarnings("unchecked")
     Annotation annotation = clazz.getAnnotation(ComponentScan.class);
     if (annotation == null)
@@ -56,9 +57,9 @@ public class DummyFramework {
     return true;
   }
 
-  private static void initContext(Set<String> classes) throws ClassNotFoundException,
-      AppContextException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException,
-      SecurityException, InstantiationException, InvocationTargetException {
+  private static void initContext(Set<String> classes)
+      throws ClassNotFoundException, AppContextException {
+    System.out.println("\n\n ****** DummyFramework.initContext() ***** \n\n");
     applicationContext = new ApplicationContext(classes);
   }
 

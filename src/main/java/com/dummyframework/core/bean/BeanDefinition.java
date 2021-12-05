@@ -8,6 +8,8 @@ import java.util.List;
 
 public class BeanDefinition {
 
+  private String packageName;
+
   private String className;
 
   private Class<?> beanType;
@@ -24,11 +26,13 @@ public class BeanDefinition {
 
   private Method factoryMethod;
 
+  private boolean hasFactoryMethod = false;
+
   private List<Method> methods = new ArrayList<>();
 
   private List<Field> fields = new ArrayList<>();
 
-  private Class<?> implementedInterfaces;
+  private Class<?>[] implementedInterfaces;
 
   public String getClassName() {
     return className;
@@ -84,6 +88,7 @@ public class BeanDefinition {
 
   public void setFactoryMethod(Method factoryMethod) {
     this.factoryMethod = factoryMethod;
+    this.hasFactoryMethod = true;
   }
 
   public List<Method> getMethods() {
@@ -102,11 +107,11 @@ public class BeanDefinition {
     this.fields.add(field);
   }
 
-  public Class<?> getImplementedInterfaces() {
+  public Class<?>[] getImplementedInterfaces() {
     return implementedInterfaces;
   }
 
-  public void setImplementedInterfaces(Class<?> implementedInterfaces) {
+  public void setImplementedInterfaces(Class<?>[] implementedInterfaces) {
     this.implementedInterfaces = implementedInterfaces;
   }
 
@@ -116,5 +121,17 @@ public class BeanDefinition {
 
   public void setBeanType(Class<?> beanType) {
     this.beanType = beanType;
+  }
+
+  public String getPackageName() {
+    return packageName;
+  }
+
+  public void setPackageName(String packageName) {
+    this.packageName = packageName;
+  }
+
+  public boolean hasFactoryMethod() {
+    return hasFactoryMethod;
   }
 }

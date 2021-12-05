@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
@@ -46,10 +48,23 @@ public class ScanComponent {
       URL resource = resources.nextElement();
       directories.add(new File(resource.getFile()));
     }
-    Set<String> classes = new TreeSet<String>();
+    Set<String> classes = new TreeSet<String>(new ClassNameComparator());
     for (File directory : directories) {
       classes.addAll(findClasses(directory, rootPackage, false));
     }
     return classes;
+  }
+
+  private static class ClassNameComparator implements Comparator<String> {
+
+    private String removePackage(String className) {
+      String[] segregatedName = className.split("\\.");
+      return segregatedName[segregatedName.length - 1];
+    }
+
+    @Override
+    public int compare(String classNameA, String classNameB) {
+      return removePackage(classNameA).compareTo(removePackage(classNameB));
+    }
   }
 }

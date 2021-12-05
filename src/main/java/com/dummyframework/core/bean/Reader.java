@@ -3,39 +3,58 @@ package com.dummyframework.core.bean;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 import com.dummyframework.annotations.Autowired;
 import com.dummyframework.annotations.Config;
 import com.dummyframework.annotations.Controller;
 import com.dummyframework.annotations.Dependency;
 import com.dummyframework.annotations.Service;
-
+import com.dummyframework.logger.Logger;
 
 // kind of builder class for BeanDefinition
 public class Reader {
 
-  private BeanDefinition beanDefinition;
-
   protected final Class<?>[] beanableAnnotations = {Config.class, Controller.class, Service.class};
 
-  public BeanDefinition read(Class<?> clazz) {
+  private BeanDefinitionRegistry registry;
+
+  private final Logger LOG = new Logger(getClass());
+
+  public Reader() {
+    this.registry = BeanDefinitionRegistry.getInstance();
+  }
+
+  public void register(List<Class<?>> classes) {
+    for (Class<?> clazz : classes) {
+      try {
+        LOG.info("Reading " + clazz);
+        registry.addToDefinitions(read(clazz));
+      } catch (Exception e) {
+        LOG.error("Cannot read bean to create definition.");
+      }
+    }
+  }
+
+  public BeanDefinition read(Class<?> clazz) throws Exception {
     return read(clazz, true);
   }
 
-  private BeanDefinition read(Class<?> clazz, boolean createIfBean) {
+  private BeanDefinition read(Class<?> clazz, boolean createIfBean) throws Exception {
     Class<?> beanableAnnotation = getBeanableAnnotation(clazz);
     if (beanableAnnotation == null && createIfBean) {
       return null;
     }
-    this.beanDefinition = new BeanDefinition();
-    this.beanDefinition.setBeanType(beanableAnnotation);
-    // create a configuration metadata object or bean defination object.
-    readFields(clazz);
-    readConstructors(clazz);
-    readMethods(clazz);
+    BeanDefinition beanDefinition = new BeanDefinition();
+    beanDefinition.setBeanType(beanableAnnotation);
+    beanDefinition.setClassName(clazz.getName());
+    beanDefinition.setPackageName(clazz.getPackageName());
+    beanDefinition.setImplementedInterfaces(clazz.getInterfaces());
+    readFields(clazz, beanDefinition);
+    readConstructors(clazz, beanDefinition);
+    readMethods(clazz, beanDefinition);
     return beanDefinition;
   }
 
-  // configuration matadata
   @SuppressWarnings("rawtypes")
   private Class<?> getBeanableAnnotation(Class<?> clazz) {
     for (Class ann : beanableAnnotations) {
@@ -46,46 +65,47 @@ public class Reader {
     return null;
   }
 
-  // will read user defined constructor. constructor with @autowired or with 0 param will be
-  // considered.
-  private void readConstructors(Class<?> clazz) {
+  private void readConstructors(Class<?> clazz, BeanDefinition beanDefinition)
+      throws NoSuchMethodException, SecurityException {
     Constructor<?>[] userDefinedConstructors = clazz.getDeclaredConstructors();
     for (Constructor<?> constructor : userDefinedConstructors) {
       if (constructor.getParameterCount() == 0) {
-        if (this.beanDefinition.getNoParamConstructor() != null)
-          this.beanDefinition.setNoParamConstructor(constructor);
-        continue;
+        if (beanDefinition.getNoParamConstructor() != null)
+          beanDefinition.setNoParamConstructor(constructor);
+      } else if (constructor.isAnnotationPresent(Autowired.class)) {
+        beanDefinition.addParameterizedConstructor(constructor);
       }
-      if (constructor.isAnnotationPresent(Autowired.class)) {
-        this.beanDefinition.addParameterizedConstructor(constructor);
-      }
+    }
+    if (beanDefinition.getNoParamConstructor() == null) {
+      beanDefinition.setNoParamConstructor(clazz.getConstructor());
     }
   }
 
-  private void readMethods(Class<?> clazz) {
+  private void readMethods(Class<?> clazz, BeanDefinition beanDefinition) throws Exception {
     Method[] userDefinedMethods = clazz.getDeclaredMethods();
     for (Method method : userDefinedMethods) {
-      if (method.isAnnotationPresent(Autowired.class)
-          || method.isAnnotationPresent(Dependency.class)) {
-        this.beanDefinition.addMethod(method);
-        if (method.isAnnotationPresent(Dependency.class)
-            && this.beanDefinition.getBeanType() == Config.class) {
-          if (method.getReturnType().equals(Void.TYPE)) {
-            // throw exception, bean method cannot have void retrun type.
-          }
-          BeanDefinition beanMethodDefinition = read(method.getReturnType(), false);
-          // save this beanMethodDefination to the registry or somewhere.
+      if (method.isAnnotationPresent(Dependency.class)
+          && beanDefinition.getBeanType() == Config.class) {
+        if (method.getReturnType().equals(Void.TYPE)) {
+          continue;
         }
+        BeanDefinition beanMethodDefinition = read(method.getReturnType(), false);
+        method.setAccessible(true);
+        beanMethodDefinition.setFactoryMethod(method);
+        registry.addToDefinitions(beanMethodDefinition);
+      } else if (method.isAnnotationPresent(Autowired.class)) {
+        method.setAccessible(true);
+        beanDefinition.addMethod(method);
       }
     }
   }
 
-  // will read only autowired fields
-  private void readFields(Class<?> clazz) {
+  private void readFields(Class<?> clazz, BeanDefinition beanDefinition) {
     Field[] allFields = clazz.getDeclaredFields();
     for (Field field : allFields) {
       if (field.isAnnotationPresent(Autowired.class)) {
-        this.beanDefinition.addField(field);
+        field.setAccessible(true);
+        beanDefinition.addField(field);
       }
     }
   }
