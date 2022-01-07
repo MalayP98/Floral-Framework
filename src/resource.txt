@@ -3,10 +3,9 @@ javac -cp ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/lib/\* ~/Work/
 rm -rf ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/app
 rm ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/app.war
 cd ~/Work/Projects/Dummy-Framework/src/main/webapp/ && jar -cvf app.war * && cd 
-mv ~/Work/Projects/Dummy-Framework/src/main/webapp/app.war ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ && cd ~/Work/Projects/Dummy-Framework/
-cd ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ && rm -rf app app.war && cd ~/Work/Projects/Dummy-Framework 
-cd ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ && jar -xvf app.war && cd
-cd ~/Work/Software/Tomact/apache-tomcat-9.0.48/logs/ && tail -f catalina.out
+cd ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ && rm -rf app app.war
+mv ~/Work/Projects/Dummy-Framework/src/main/webapp/app.war ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/
+cd ~/Work/Software/Tomact/apache-tomcat-9.0.48/webapps/ && jar -xvf app.war && cd ~/Work/Projects/Dummy-Framework
 
 javac -cp ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/classes/:Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/lib/\*  ~/Work/Projects/Dummy-Framework/src/main/java/com/**/*.java -d  ~/Work/Projects/Dummy-Framework/src/main/webapp/WEB-INF/classes 
 

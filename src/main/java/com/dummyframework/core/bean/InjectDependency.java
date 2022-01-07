@@ -1,6 +1,5 @@
 package com.dummyframework.core.bean;
 
-import java.io.EOFException;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

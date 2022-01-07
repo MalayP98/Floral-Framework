@@ -27,7 +27,9 @@ public class BeanDefinitionRegistry {
   }
 
   public String generateBeanName(Class<?> clazz) {
-    return clazz.getPackageName() + "." + clazz.getName();
+    LOG.info(
+        "Bean name for " + clazz + " = " + clazz.getPackageName() + " + " + clazz.getSimpleName());
+    return clazz.getPackageName() + "." + clazz.getSimpleName();
   }
 
   public void addToDefinitions(BeanDefinition definition) throws Exception {
@@ -57,4 +59,13 @@ public class BeanDefinitionRegistry {
     }
     return beanDefinitionRegistry.get(beanName);
   }
+
+
+  public void show() {
+    System.out.println("\n\n\n ");
+    for (Map.Entry<String, BeanDefinition> entry : beanDefinitionRegistry.entrySet()) {
+      System.out.println(entry.getKey() + " --> " + entry.getValue() + "\n");
+    }
+  }
+
 }

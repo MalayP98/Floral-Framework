@@ -46,7 +46,8 @@ public class Reader {
     }
     BeanDefinition beanDefinition = new BeanDefinition();
     beanDefinition.setBeanType(beanableAnnotation);
-    beanDefinition.setClassName(clazz.getName());
+    LOG.info("Setting class name to " + clazz.getSimpleName() + " for class " + clazz);
+    beanDefinition.setClassName(clazz.getSimpleName());
     beanDefinition.setPackageName(clazz.getPackageName());
     beanDefinition.setImplementedInterfaces(clazz.getInterfaces());
     readFields(clazz, beanDefinition);

@@ -5,10 +5,10 @@ import com.dummyframework.annotations.Dependency;
 import com.dummyframework.core.Properties;
 
 @Config
-public class AppConfig {
+public class ZConfigClass {
 
-  public AppConfig() {
-    System.out.println("\n\n **** AppConfig constructor called.");
+  public ZConfigClass() {
+    System.out.println("\n\n **** AppConfig constructor called-------@@@@.");
   }
 
   public void setAppName() {

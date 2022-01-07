@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.Set;
 import com.dummyframework.annotations.ComponentScan;
 import com.dummyframework.exception.AppContextException;
@@ -50,7 +49,6 @@ public class DummyFramework {
   }
 
   private static boolean isComponentScanPossible(Class<?> clazz) {
-    @SuppressWarnings("unchecked")
     Annotation annotation = clazz.getAnnotation(ComponentScan.class);
     if (annotation == null)
       return false;
