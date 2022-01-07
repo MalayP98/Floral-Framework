@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ScanComponent {
 
@@ -26,7 +29,8 @@ public class ScanComponent {
         if (file.isDirectory())
           classes.addAll(findClasses(file, packageName, true));
         else if (file.getName().endsWith(".class")) {
-          String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
+          String className =
+              packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
           classes.add(className);
         }
       }
@@ -34,7 +38,7 @@ public class ScanComponent {
     return classes;
   }
 
-  public static List<String> startComponentScan(String rootPackage) throws IOException {
+  public static Set<String> startComponentScan(String rootPackage) throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     String path = rootPackage.replace('.', '/');
     Enumeration<URL> resources = classLoader.getResources(path);
@@ -43,10 +47,23 @@ public class ScanComponent {
       URL resource = resources.nextElement();
       directories.add(new File(resource.getFile()));
     }
-    List<String> classes = new ArrayList<String>();
+    Set<String> classes = new TreeSet<String>(new ClassNameComparator());
     for (File directory : directories) {
       classes.addAll(findClasses(directory, rootPackage, false));
     }
     return classes;
+  }
+
+  private static class ClassNameComparator implements Comparator<String> {
+
+    private String removePackage(String className) {
+      String[] segregatedName = className.split("\\.");
+      return segregatedName[segregatedName.length - 1];
+    }
+
+    @Override
+    public int compare(String classNameA, String classNameB) {
+      return removePackage(classNameA).compareTo(removePackage(classNameB));
+    }
   }
 }

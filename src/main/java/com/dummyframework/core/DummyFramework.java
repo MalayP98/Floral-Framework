@@ -5,8 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-
+import java.util.Set;
 import com.dummyframework.annotations.ComponentScan;
 import com.dummyframework.exception.AppContextException;
 import com.dummyframework.exception.NoComponentScanException;
@@ -26,7 +25,8 @@ public class DummyFramework {
     return ROOT_PACKAGE;
   }
 
-  public static <T> void run(Class<T> clazz) throws IOException, NoComponentScanException, ClassNotFoundException,
+  public static <T> void run(Class<T> clazz)
+      throws IOException, NoComponentScanException, ClassNotFoundException,
       IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException,
       InstantiationException, InvocationTargetException, AppContextException {
     printBanner();
@@ -35,11 +35,12 @@ public class DummyFramework {
     String rootPackage = getScanningPackage(clazz);
     setRootPackage(rootPackage);
     logger.info("Starting Component Scan.");
-    List<String> classes = ScanComponent.startComponentScan(ROOT_PACKAGE);
+    Set<String> classes = ScanComponent.startComponentScan(ROOT_PACKAGE);
+    logger.info("Component scan completed successfully.");
     initContext(classes);
   }
 
-  public static String getScanningPackage(Class clazz) {
+  public static String getScanningPackage(Class<?> clazz) {
     ComponentScan annotation = (ComponentScan) clazz.getAnnotation(ComponentScan.class);
     String packageName = annotation.packageName();
     if (packageName.equals(""))
@@ -47,17 +48,16 @@ public class DummyFramework {
     return packageName;
   }
 
-  private static boolean isComponentScanPossible(Class clazz) {
-    @SuppressWarnings("unchecked")
+  private static boolean isComponentScanPossible(Class<?> clazz) {
     Annotation annotation = clazz.getAnnotation(ComponentScan.class);
     if (annotation == null)
       return false;
     return true;
   }
 
-  private static void initContext(List<String> classes)
-      throws ClassNotFoundException, AppContextException, IllegalArgumentException, IllegalAccessException,
-      NoSuchMethodException, SecurityException, InstantiationException, InvocationTargetException {
+  private static void initContext(Set<String> classes)
+      throws ClassNotFoundException, AppContextException {
+    System.out.println("\n\n ****** DummyFramework.initContext() ***** \n\n");
     applicationContext = new ApplicationContext(classes);
   }
 
