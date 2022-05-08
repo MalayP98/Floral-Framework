@@ -1,32 +1,42 @@
 package com.dummyframework.core.bean;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import com.dummyframework.logger.Logger;
 
 public abstract class AbstractBeanFactory {
 
-  Logger LOG = new Logger(getClass());
+  private static Logger LOG = new Logger(AbstractBeanFactory.class);
 
   private final BeanDefinitionRegistry beanDefinitionRegistry =
       BeanDefinitionRegistry.getInstance();
 
-  private InjectDependency injectDependency = new InjectDependency(this);
+  DependencyInjection dependencyInjection = new DependencyInjection(this);
 
-  public Object start(Class<?> clazz) {
+  /**
+   * Uses class for creating bean. First searches the bean defination from the bean factory. If
+   * present then uses this bean defination to create bean.
+   */
+  public Object createBean(Class<?> clazz) {
+    LOG.info("Creating bean for " + clazz.getSimpleName());
     BeanDefinition definition = beanDefinitionRegistry.getBeanDefinition(clazz);
     if (definition == null) {
       return null;
     }
+    return createBean(definition);
+  }
+
+  /**
+   * Takes bean defination and create object using this. Then autowires the fields present in this
+   * object. Thus completing bean creation.
+   */
+  Object createBean(BeanDefinition definition) {
     Object bean = null;
     try {
       bean = createObject(definition);
-      autowire(bean, definition);
+      dependencyInjection.performCompleteInjection(bean, definition);
     } catch (Exception e) {
       LOG.error("Cannot instantiate bean with name '" + definition.getPackageName() + "."
           + definition.getClassName() + "'");
@@ -34,58 +44,65 @@ public abstract class AbstractBeanFactory {
     return bean;
   }
 
-  private Object createObject(BeanDefinition beanDefinition) throws InstantiationException,
-      IllegalAccessException, IllegalArgumentException, InvocationTargetException, Exception {
+  /**
+   * Creates the object by either using factory method or constructor.
+   */
+  private Object createObject(BeanDefinition beanDefinition) throws IllegalAccessException,
+      IllegalArgumentException, InvocationTargetException, Exception {
     if (beanDefinition.hasFactoryMethod()) {
-      Method factoryMethod = beanDefinition.getFactoryMethod();
-      Object parentBean = start(factoryMethod.getDeclaringClass());
-      return factoryMethod.invoke(parentBean, injectDependency.autowire(factoryMethod));
+      return createObjectWithFactoryMethod(beanDefinition.getFactoryMethod());
     }
-    Constructor<?> parameterizedConstructor =
-        fetchConstructor(beanDefinition.getParameterizedConstructors());
-    if (parameterizedConstructor != null) {
-      return parameterizedConstructor
-          .newInstance(injectDependency.autowire(parameterizedConstructor));
+    if (beanDefinition.hasParameterizedConstructors()) {
+      return createObjectWithParameterizedConstructor(
+          beanDefinition.getParameterizedConstructors());
     }
     Constructor<?> nonParameterizedConstructor = beanDefinition.getNoParamConstructor();
     return nonParameterizedConstructor.newInstance();
   }
 
+  /**
+   * Fetches parametrized constructor with largest number of parameters. If found, checks if all the
+   * required params are present or not. If all params are not found it returns null.
+   */
   private Constructor<?> fetchConstructor(List<Constructor<?>> parameterizedConstructors) {
-    Collections.sort(parameterizedConstructors, new Comparator<Constructor<?>>() {
-      @Override
-      public int compare(Constructor<?> constructorA, Constructor<?> constructorB) {
-        if (constructorA.getParameterCount() >= constructorB.getParameterCount()) {
-          return 1;
-        }
-        return -1;
-      }
-    });
-    boolean constructorFound = true;
-    for (Constructor<?> constructor : parameterizedConstructors) {
-      Class<?>[] paramTypes = constructor.getParameterTypes();
-      for (Class<?> clazz : paramTypes) {
-        if (!beanDefinitionRegistry
-            .hasBeanDefinition(beanDefinitionRegistry.generateBeanName(clazz))) {
-          constructorFound = false;
-          break;
-        }
-      }
-      if (constructorFound) {
-        return constructor;
+    Constructor<?> maxArgumentConstructor = null;
+    for (Constructor<?> parameterizedConstructor : parameterizedConstructors) {
+      if (maxArgumentConstructor == null || maxArgumentConstructor
+          .getParameterCount() < parameterizedConstructor.getParameterCount()) {
+        maxArgumentConstructor = parameterizedConstructor;
       }
     }
-    return null;
+
+    Class<?>[] paramTypes = maxArgumentConstructor.getParameterTypes();
+    for (Class<?> clazz : paramTypes) {
+      if (!beanDefinitionRegistry.hasBeanDefinition(beanDefinitionRegistry.generateBeanName(clazz)))
+        return null;
+    }
+    return maxArgumentConstructor;
   }
 
-  private void autowire(Object bean, BeanDefinition definition) throws Exception {
-    List<Field> fields = definition.getFields();
-    for (Field field : fields) {
-      injectDependency.autowire(bean, field);
+  /**
+   * Takes a method and invoke it to create a bean, to achieve this it first creates the bean for
+   * it's parent class and then uses that bean to further call the method.
+   */
+  private Object createObjectWithFactoryMethod(Method factoryMethod) throws IllegalAccessException,
+      IllegalArgumentException, InvocationTargetException, Exception {
+    Object parentBean = createBean(factoryMethod.getDeclaringClass());
+    return factoryMethod.invoke(parentBean,
+        dependencyInjection.getMethodDependencies(factoryMethod));
+  }
+
+  /**
+   * Uses parameterized constructor to create the bean for the class if present.
+   */
+  private Object createObjectWithParameterizedConstructor(
+      List<Constructor<?>> parameterizedConstructors) throws InstantiationException,
+      IllegalAccessException, IllegalArgumentException, InvocationTargetException, Exception {
+    Constructor<?> parameterizedConstructor = fetchConstructor(parameterizedConstructors);
+    if (parameterizedConstructor != null) {
+      return parameterizedConstructor
+          .newInstance(dependencyInjection.getConstructorDependencies(parameterizedConstructor));
     }
-    List<Method> methods = definition.getMethods();
-    for (Method method : methods) {
-      method.invoke(bean, injectDependency.autowire(method));
-    }
+    return null;
   }
 }

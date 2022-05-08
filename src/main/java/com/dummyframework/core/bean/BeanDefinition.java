@@ -5,20 +5,21 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import com.dummyframework.annotations.Config;
+import com.dummyframework.annotations.Controller;
+import com.dummyframework.annotations.Service;
+import com.dummyframework.utils.BeanType;
 
+/**
+ * Stores the data used by @BeanFactory to create bean.
+ */
 public class BeanDefinition {
 
   private String packageName;
 
   private String className;
 
-  private Class<?> beanType;
-
-  private Scope scope;
-
-  private boolean primary;
-
-  private String parentClass;
+  private BeanType beanType;
 
   private Constructor<?> noParamConstructor;
 
@@ -27,6 +28,8 @@ public class BeanDefinition {
   private Method factoryMethod;
 
   private boolean hasFactoryMethod = false;
+
+  private boolean hasParameterizedConstructors = false;
 
   private List<Method> methods = new ArrayList<>();
 
@@ -42,30 +45,6 @@ public class BeanDefinition {
     this.className = className;
   }
 
-  public Scope getScope() {
-    return scope;
-  }
-
-  public void setScope(Scope scope) {
-    this.scope = scope;
-  }
-
-  public boolean isPrimary() {
-    return primary;
-  }
-
-  public void setPrimary(boolean primary) {
-    this.primary = primary;
-  }
-
-  public String getParentClass() {
-    return parentClass;
-  }
-
-  public void setParentClass(String parentClass) {
-    this.parentClass = parentClass;
-  }
-
   public Constructor<?> getNoParamConstructor() {
     return noParamConstructor;
   }
@@ -79,6 +58,7 @@ public class BeanDefinition {
   }
 
   public void addParameterizedConstructor(Constructor<?> parameterizedConstructor) {
+    hasParameterizedConstructors = true;
     this.parameterizedConstructors.add(parameterizedConstructor);
   }
 
@@ -115,12 +95,18 @@ public class BeanDefinition {
     this.implementedInterfaces = implementedInterfaces;
   }
 
-  public Class<?> getBeanType() {
+  public BeanType getBeanType() {
     return beanType;
   }
 
-  public void setBeanType(Class<?> beanType) {
-    this.beanType = beanType;
+  public void setBeanType(Class<?> clazz) {
+    if (clazz == Config.class) {
+      this.beanType = BeanType.CONFIGURATION;
+    } else if (clazz == Controller.class) {
+      this.beanType = BeanType.CONTROLLER;
+    } else if (clazz == Service.class) {
+      this.beanType = BeanType.SERVICE;
+    }
   }
 
   public String getPackageName() {
@@ -133,5 +119,9 @@ public class BeanDefinition {
 
   public boolean hasFactoryMethod() {
     return hasFactoryMethod;
+  }
+
+  public boolean hasParameterizedConstructors() {
+    return hasParameterizedConstructors;
   }
 }

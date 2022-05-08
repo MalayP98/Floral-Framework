@@ -11,18 +11,19 @@ import com.dummyframework.logger.Logger;
 public class ApplicationContext {
 
   private Logger LOG = new Logger(ApplicationContext.class);
-  private BeanFactory beanFactory = new BeanFactory();
+  private BeanFactory beanFactory;
 
   // remove this
-  BeanDefinitionRegistry registry = BeanDefinitionRegistry.getInstance();
+  BeanDefinitionRegistry registry;
 
   public ApplicationContext(Set<String> scannedClasses)
       throws ClassNotFoundException, AppContextException {
+    beanFactory = new BeanFactory();
+    registry = BeanDefinitionRegistry.getInstance();
     try {
       LOG.info("Bean creation started.");
       beanFactory.createBeans(getClasses(scannedClasses));
       LOG.info("Application Context started.");
-      registry.show();
     } catch (Exception e) {
       throw new AppContextException("Cannot start App Context.");
     }

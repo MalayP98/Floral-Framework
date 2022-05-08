@@ -57,7 +57,7 @@ public class DummyFramework {
 
   private static void initContext(Set<String> classes)
       throws ClassNotFoundException, AppContextException {
-    System.out.println("\n\n ****** DummyFramework.initContext() ***** \n\n");
+    logger.info("\n\n ****** DummyFramework.initContext() ***** \n\n");
     applicationContext = new ApplicationContext(classes);
   }
 

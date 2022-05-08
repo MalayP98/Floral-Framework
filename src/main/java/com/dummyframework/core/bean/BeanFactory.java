@@ -15,8 +15,4 @@ public class BeanFactory extends AbstractBeanFactory {
       createBean(clazz);
     }
   }
-
-  public void createBean(Class<?> clazz) {
-    start(clazz);
-  }
 }
