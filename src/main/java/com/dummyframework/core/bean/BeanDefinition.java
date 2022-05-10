@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import com.dummyframework.annotations.Config;
 import com.dummyframework.annotations.Controller;
 import com.dummyframework.annotations.Service;
@@ -36,6 +37,8 @@ public class BeanDefinition {
   private List<Field> fields = new ArrayList<>();
 
   private Class<?>[] implementedInterfaces;
+
+  private boolean isPrimaryBean = false;
 
   public String getClassName() {
     return className;
@@ -100,7 +103,9 @@ public class BeanDefinition {
   }
 
   public void setBeanType(Class<?> clazz) {
-    if (clazz == Config.class) {
+    if (Objects.isNull(clazz)) {
+      this.beanType = BeanType.NONE;
+    } else if (clazz == Config.class) {
       this.beanType = BeanType.CONFIGURATION;
     } else if (clazz == Controller.class) {
       this.beanType = BeanType.CONTROLLER;
@@ -123,5 +128,13 @@ public class BeanDefinition {
 
   public boolean hasParameterizedConstructors() {
     return hasParameterizedConstructors;
+  }
+
+  public boolean isPrimaryBean() {
+    return isPrimaryBean;
+  }
+
+  public void setIsPrimaryBean(boolean isPrimaryBean) {
+    this.isPrimaryBean = isPrimaryBean;
   }
 }

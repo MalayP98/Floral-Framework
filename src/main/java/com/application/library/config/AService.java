@@ -9,8 +9,14 @@ public class AService {
   @Autowired
   Model model;
 
+
   public AService() {
     System.out.println("\n *** Service Class created *** \n");
+  }
+
+  @Autowired
+  public void fun(InterfcA interfcA) {
+    interfcA.disp();
   }
 
 }

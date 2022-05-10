@@ -39,4 +39,8 @@ public class FrameworkUtils {
   public static boolean isServiceBean(BeanType type) {
     return (type == BeanType.SERVICE);
   }
+
+  public static String className(Class<?> clazz) {
+    return clazz.getPackageName() + "." + clazz.getName();
+  }
 }

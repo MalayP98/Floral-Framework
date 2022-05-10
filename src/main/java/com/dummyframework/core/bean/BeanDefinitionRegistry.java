@@ -3,6 +3,7 @@ package com.dummyframework.core.bean;
 import java.util.HashMap;
 import java.util.Map;
 import com.dummyframework.logger.Logger;
+import com.dummyframework.utils.FrameworkUtils;
 
 public class BeanDefinitionRegistry {
 
@@ -48,7 +49,8 @@ public class BeanDefinitionRegistry {
   public void addToDefinitions(BeanDefinition definition) throws Exception {
     String beanName = generateBeanName(definition);
     if (hasBeanDefinition(beanName)) {
-      throw new Exception("Bean with name '" + beanName + "' already present");
+      LOG.debug("Bean definition with name '" + beanName + "' already present");
+      return;
     }
     beanDefinitionRegistry.put(beanName, definition);
   }
@@ -61,8 +63,33 @@ public class BeanDefinitionRegistry {
     return beanDefinitionRegistry.containsKey(beanName);
   }
 
-  // Uses class to generate bean name and return bean's definition from registry.
+  public boolean hasBeanDefinition(Class<?> clazz) {
+    return hasBeanDefinition(generateBeanName(clazz));
+  }
+
+  /**
+   * Uses class to generate bean name and return bean's definition from registry. If the class
+   * provided is an interface then the entire registry is searched for a class that implements the
+   * given interface and is a primary bean. If multiple primary bean is found then the first in the
+   * registry is returned. If there is no primary bean or there is no class implementing the given
+   * interface then null is returned.
+   * 
+   * @param clazz
+   * @return
+   */
   public BeanDefinition getBeanDefinition(Class<?> clazz) {
+    if (clazz.isInterface()) {
+      for (BeanDefinition implementingClassDefinition : beanDefinitionRegistry.values()) {
+        for (Class<?> implementedInterface : implementingClassDefinition
+            .getImplementedInterfaces()) {
+          if (implementedInterface == clazz && implementingClassDefinition.isPrimaryBean())
+            return implementingClassDefinition;
+        }
+      }
+      LOG.error("No primary bean definitaion found implementing interface "
+          + FrameworkUtils.className(clazz) + " or not implementation is present.");
+      return null;
+    }
     return getBeanDefinition(generateBeanName(clazz));
   }
 

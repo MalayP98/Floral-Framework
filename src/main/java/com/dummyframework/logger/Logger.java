@@ -48,4 +48,11 @@ public class Logger {
     logClassName();
     log(msg);
   }
+
+  public void debug(String msg) {
+    logDateTime();
+    System.out.printf("%s %-1s %s", YELLOW, " DEBUG ", RESET);
+    logClassName();
+    log(msg);
+  }
 }

@@ -4,8 +4,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 import com.dummyframework.annotations.Autowired;
 import com.dummyframework.annotations.Dependency;
+import com.dummyframework.annotations.Primary;
 import com.dummyframework.logger.Logger;
 import com.dummyframework.utils.FrameworkUtils;
 
@@ -19,46 +21,49 @@ public class Reader {
     this.registry = BeanDefinitionRegistry.getInstance();
   }
 
-  // Takes a class from a list of classes and create bean definition for each one of them and add
-  // them to registry.
+  /**
+   * Takes a class from a list of classes and create bean definition for each one of them and add
+   * them to registry. BeanDifinition for all the classes will be created irrespective of wether it
+   * is a POJO or not. This is done so that if a bean is required for a POJO class we should have a
+   * definition in the registry. For example, if a POJO class is autowired some where in a service
+   * class, we won't be having a definition for that class and no bean can be created.
+   */
   public void register(List<Class<?>> classes) {
     for (Class<?> clazz : classes) {
       try {
-        registry.addToDefinitions(read(clazz));
+        BeanDefinition definition = read(clazz);
+        if (Objects.nonNull(definition))
+          registry.addToDefinitions(definition);
       } catch (Exception e) {
-        LOG.error("Cannot read bean to create definition.");
+        LOG.error("Cannot read class to create definition for class "
+            + FrameworkUtils.className(clazz) + ".");
+        LOG.error(e.getMessage());
       }
     }
   }
 
-  // the bean is only created if the class is beanable.
-  public BeanDefinition read(Class<?> clazz) throws Exception {
-    return read(clazz, true);
-  }
-
   /**
+   * First checks if bean is already present, and returns if in registry.
+   * 
    * Populates bean definition with required information like, beanable annotation which it uses,
    * class name with package, all the interfaces that this class implements. Reads constructor,
    * methods and fields in this class, adds them into the definition if they are quilified.
    * 
-   * @param clazz
-   * @param createIfBeanable only create a bean definition if this param is true, else it returns
-   *                         false. This parameter comes in handy especially when a bean definition
-   *                         hs to be created for a class which has no beanable annotation, for
-   *                         example a @Dependency method in a config class.
+   * @param clazz class for bean difinition is to be created
    * @return return BeanDefinition formed for the class
    * @throws Exception
    */
-  private BeanDefinition read(Class<?> clazz, boolean createIfBeanable) throws Exception {
-    Class<?> beanableAnnotation = FrameworkUtils.getBeanableAnnotation(clazz);
-    if (beanableAnnotation == null && createIfBeanable) {
-      return null;
+  private BeanDefinition read(Class<?> clazz) throws Exception {
+    if (registry.hasBeanDefinition(clazz)) {
+      return registry.getBeanDefinition(clazz);
     }
+    Class<?> beanableAnnotation = FrameworkUtils.getBeanableAnnotation(clazz);
     BeanDefinition beanDefinition = new BeanDefinition();
     beanDefinition.setBeanType(beanableAnnotation);
     beanDefinition.setClassName(clazz.getSimpleName());
     beanDefinition.setPackageName(clazz.getPackageName());
     beanDefinition.setImplementedInterfaces(clazz.getInterfaces());
+    beanDefinition.setIsPrimaryBean(clazz.isAnnotationPresent(Primary.class));
     readConstructors(clazz, beanDefinition);
     readFields(clazz, beanDefinition);
     readMethods(clazz, beanDefinition);
@@ -115,13 +120,16 @@ public class Reader {
       if (method.isAnnotationPresent(Dependency.class)
           && FrameworkUtils.isConfigurationBean(beanDefinition.getBeanType())
           && !method.getReturnType().equals(Void.TYPE)) {
-        BeanDefinition beanMethodDefinition = read(method.getReturnType(), false);
+        BeanDefinition beanMethodDefinition = read(method.getReturnType());
         method.setAccessible(true);
         beanMethodDefinition.setFactoryMethod(method);
         registry.addToDefinitions(beanMethodDefinition);
       }
       if (method.isAnnotationPresent(Autowired.class)) {
         method.setAccessible(true);
+        // remove
+        LOG.info("adding method " + method.getName() + " to bean definition of class "
+            + FrameworkUtils.className(clazz));
         beanDefinition.addMethod(method);
       }
     }

@@ -20,7 +20,6 @@ public abstract class AbstractBeanFactory {
    * present then uses this bean defination to create bean.
    */
   public Object createBean(Class<?> clazz) {
-    LOG.info("Creating bean for " + clazz.getSimpleName());
     BeanDefinition definition = beanDefinitionRegistry.getBeanDefinition(clazz);
     if (definition == null) {
       return null;
@@ -32,7 +31,7 @@ public abstract class AbstractBeanFactory {
    * Takes bean defination and create object using this. Then autowires the fields present in this
    * object. Thus completing bean creation.
    */
-  Object createBean(BeanDefinition definition) {
+  public Object createBean(BeanDefinition definition) {
     Object bean = null;
     try {
       bean = createObject(definition);
