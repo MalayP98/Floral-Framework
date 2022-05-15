@@ -5,23 +5,21 @@ import java.util.List;
 import java.util.Set;
 import com.dummyframework.core.bean.BeanDefinitionRegistry;
 import com.dummyframework.core.bean.BeanFactory;
+import com.dummyframework.core.bean.BeanRegistry;
 import com.dummyframework.exception.AppContextException;
 import com.dummyframework.logger.Logger;
 
 public class ApplicationContext {
 
   private Logger LOG = new Logger(ApplicationContext.class);
-  private BeanFactory beanFactory;
 
-  // remove this
-  BeanDefinitionRegistry registry;
+  private BeanFactory beanFactory;
 
   public ApplicationContext(Set<String> scannedClasses)
       throws ClassNotFoundException, AppContextException {
-    beanFactory = new BeanFactory();
-    registry = BeanDefinitionRegistry.getInstance();
     try {
       LOG.info("Bean creation started.");
+      beanFactory = new BeanFactory();
       beanFactory.createBeans(getClasses(scannedClasses));
       LOG.info("Application Context started.");
     } catch (Exception e) {

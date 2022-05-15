@@ -9,10 +9,10 @@ public class BeanFactory extends AbstractBeanFactory {
     reader.register(classes);
   }
 
-  public void createBeans(List<Class<?>> classes) {
+  public void createBeans(List<Class<?>> classes) throws Exception {
     registerBeans(classes);
     for (Class<?> clazz : classes) {
-      createBean(clazz);
+      createBean(clazz, "");
     }
   }
 }

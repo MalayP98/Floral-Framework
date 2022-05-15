@@ -1,8 +1,9 @@
 package com.application.library.config;
 
 import com.dummyframework.annotations.Primary;
+import com.dummyframework.annotations.Service;
 
-@Primary
+@Service
 public class InterfcBImpl implements InterfcA {
 
   @Override

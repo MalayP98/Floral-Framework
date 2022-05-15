@@ -22,4 +22,15 @@ public class BeanRegistry {
 
   private HashMap<String, Object> beanRegistry = new HashMap<>();
 
+  public void add(String key, Object bean) {
+    this.beanRegistry.put(key, bean);
+  }
+
+  public Object getBean(String beanName) {
+    return this.beanRegistry.get(beanName);
+  }
+
+  public boolean hasBean(String beanName) {
+    return this.beanRegistry.containsKey(beanName);
+  }
 }

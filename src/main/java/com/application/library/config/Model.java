@@ -1,5 +1,8 @@
 package com.application.library.config;
 
+import com.dummyframework.annotations.Service;
+
+@Service(name = "abc")
 public class Model {
 
   public Model() {

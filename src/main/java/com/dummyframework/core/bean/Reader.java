@@ -57,9 +57,12 @@ public class Reader {
     if (registry.hasBeanDefinition(clazz)) {
       return registry.getBeanDefinition(clazz);
     }
-    Class<?> beanableAnnotation = FrameworkUtils.getBeanableAnnotation(clazz);
+    Class<?> componentAnnotation = FrameworkUtils.getComponentClass(clazz);
     BeanDefinition beanDefinition = new BeanDefinition();
-    beanDefinition.setBeanType(beanableAnnotation);
+    if (Objects.nonNull(componentAnnotation)) {
+      beanDefinition.setComponentName(FrameworkUtils.beanName(clazz));
+    }
+    beanDefinition.setBeanType(componentAnnotation);
     beanDefinition.setClassName(clazz.getSimpleName());
     beanDefinition.setPackageName(clazz.getPackageName());
     beanDefinition.setImplementedInterfaces(clazz.getInterfaces());
@@ -93,25 +96,9 @@ public class Reader {
 
   /**
    * If a method in the list has @Dependency annotation i.e. it provides bean and is present inside
-   * Configuration class then the return type of the method is saved as bean definition. Even if the
-   * above condition is false, the method is added to the bean definition if it is having @Autowired
-   * annotation because it can happen that the method is somthing like this,
-   * 
-   * <pre>
-   * &#64;Config
-   * public class ConfigClass {
-   * 
-   *   &#64;Dependency
-   *   @Autowired
-   *   public ModelA createModelA(ModelB modelB) {
-   *     // some code
-   *     return modelAObject;
-   *   }
-   * }
-   * </pre>
-   * 
-   * In the above situation the createModelA() method will return a bean and also needs ModelB to
-   * create ModelA so this method will also be added into bean definition.
+   * Configuration class then the return type of the method is saved as bean definition. If this
+   * condition is false then it is checked that if the method is Autowired or not, it will be added
+   * to the definition only if it is Autowired.
    */
   private void readMethods(Class<?> clazz, BeanDefinition beanDefinition) throws Exception {
     Method[] userDefinedMethods = clazz.getDeclaredMethods();
@@ -122,14 +109,10 @@ public class Reader {
           && !method.getReturnType().equals(Void.TYPE)) {
         BeanDefinition beanMethodDefinition = read(method.getReturnType());
         method.setAccessible(true);
-        beanMethodDefinition.setFactoryMethod(method);
+        beanMethodDefinition.addFactoryMethod(method);
         registry.addToDefinitions(beanMethodDefinition);
-      }
-      if (method.isAnnotationPresent(Autowired.class)) {
+      } else if (method.isAnnotationPresent(Autowired.class)) {
         method.setAccessible(true);
-        // remove
-        LOG.info("adding method " + method.getName() + " to bean definition of class "
-            + FrameworkUtils.className(clazz));
         beanDefinition.addMethod(method);
       }
     }

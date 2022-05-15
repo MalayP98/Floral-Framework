@@ -11,7 +11,7 @@ public class FrameworkUtils {
    * create a bean for that class and store it.
    */
   private final static Class<?>[] BEANABLE_ANNOTATIONS =
-      {Config.class, Controller.class, Service.class};
+      {Config.class, Service.class, Controller.class};
 
   /**
    * Checks if provided class has any one of the beanable annotations.
@@ -19,7 +19,7 @@ public class FrameworkUtils {
    * @return returns first benable annotation if present, else returns null.
    */
   @SuppressWarnings("rawtypes")
-  public static Class<?> getBeanableAnnotation(Class<?> clazz) {
+  public static Class<?> getComponentClass(Class<?> clazz) {
     for (Class ann : BEANABLE_ANNOTATIONS) {
       if (clazz.isAnnotationPresent(ann)) {
         return ann;
@@ -28,19 +28,33 @@ public class FrameworkUtils {
     return null;
   }
 
-  public static boolean isConfigurationBean(BeanType type) {
-    return (type == BeanType.CONFIGURATION);
+  public static boolean isConfigurationBean(ComponentType type) {
+    return (type == ComponentType.CONFIGURATION);
   }
 
-  public static boolean isControllerBean(BeanType type) {
-    return (type == BeanType.CONTROLLER);
+  public static boolean isControllerBean(ComponentType type) {
+    return (type == ComponentType.CONTROLLER);
   }
 
-  public static boolean isServiceBean(BeanType type) {
-    return (type == BeanType.SERVICE);
+  public static boolean isServiceBean(ComponentType type) {
+    return (type == ComponentType.SERVICE);
   }
 
   public static String className(Class<?> clazz) {
     return clazz.getPackageName() + "." + clazz.getName();
+  }
+
+  public static String beanName(Class<?> clazz) {
+    Class<?> annotation = getComponentClass(clazz);
+    String beanName = "";
+    if (annotation == Config.class)
+      beanName = clazz.getAnnotation(Config.class).name();
+    if (annotation == Service.class)
+      beanName = clazz.getAnnotation(Service.class).name();
+    if (annotation == Controller.class)
+      beanName = clazz.getAnnotation(Controller.class).name();
+    if (beanName.equals(""))
+      return clazz.getSimpleName();
+    return beanName;
   }
 }
