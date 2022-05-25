@@ -5,8 +5,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import com.dummyframework.annotations.ComponentScan;
+import com.dummyframework.core.bean.Reader;
 import com.dummyframework.exception.AppContextException;
 import com.dummyframework.exception.NoComponentScanException;
 import com.dummyframework.logger.Logger;
@@ -14,8 +17,9 @@ import com.dummyframework.logger.Logger;
 public class DummyFramework {
 
   private static String ROOT_PACKAGE = null;
-  private static Logger logger = new Logger(DummyFramework.class);
+  private static Logger LOG = new Logger(DummyFramework.class);
   private static ApplicationContext applicationContext = null;
+  private static Reader reader = new Reader();
 
   public static void setRootPackage(String rootPackage) {
     ROOT_PACKAGE = rootPackage;
@@ -30,14 +34,21 @@ public class DummyFramework {
       IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException,
       InstantiationException, InvocationTargetException, AppContextException {
     printBanner();
+    List<Class<?>> scannedClasses = new ArrayList<>(scanClasses(clazz));
+    reader.register(scannedClasses);
+    loadContext(scannedClasses);
+  }
+
+  private static <T> Set<Class<?>> scanClasses(Class<T> clazz)
+      throws NoComponentScanException, IOException, ClassNotFoundException {
     if (!isComponentScanPossible(clazz))
       throw new NoComponentScanException();
     String rootPackage = getScanningPackage(clazz);
     setRootPackage(rootPackage);
-    logger.info("Starting Component Scan.");
-    Set<String> classes = ScanComponent.startComponentScan(ROOT_PACKAGE);
-    logger.info("Component scan completed successfully.");
-    initContext(classes);
+    LOG.info("Starting Component Scan.");
+    Set<Class<?>> classes = ScanComponent.startComponentScan(ROOT_PACKAGE);
+    LOG.info("Component scan completed successfully.");
+    return classes;
   }
 
   public static String getScanningPackage(Class<?> clazz) {
@@ -55,9 +66,8 @@ public class DummyFramework {
     return true;
   }
 
-  private static void initContext(Set<String> classes)
+  private static void loadContext(List<Class<?>> classes)
       throws ClassNotFoundException, AppContextException {
-    logger.info("\n\n ****** DummyFramework.initContext() ***** \n\n");
     applicationContext = new ApplicationContext(classes);
   }
 
@@ -77,7 +87,9 @@ public class DummyFramework {
         System.out.println(line);
       }
     } catch (IOException e1) {
-      logger.error("No file found by name \"banner.txt\"");
+      LOG.error("No file found by name \"banner.txt\"");
     }
   }
+
+
 }

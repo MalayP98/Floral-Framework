@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import com.dummyframework.annotations.BeanName;
 import com.dummyframework.logger.Logger;
 
@@ -33,19 +34,20 @@ public abstract class AbstractBeanFactory {
       return beanRegistry.getBean(withName);
     }
     BeanDefinition definition = beanDefinitionRegistry.getBeanDefinition(clazz);
-    if (definition == null) {
-      return null;
-    }
-    List<String> beanNames = createBean(definition);
-    if (withName.isEmpty()) {
-      return beanRegistry.getBean(definition.getComponentName());
-    } else {
-      for (String beanName : beanNames) {
-        if (beanName.equals(withName))
-          return beanRegistry.getBean(beanName);
+    if (Objects.nonNull(definition)) {
+      List<String> beanNames = createBean(definition);
+      if (withName.isEmpty()) {
+        return beanRegistry.getBean(definition.getComponentName());
+      } else {
+        for (String beanName : beanNames) {
+          if (beanName.equals(withName))
+            return beanRegistry.getBean(beanName);
+        }
       }
+      throw new Exception("No bean with name '" + withName + "'  found.");
     }
-    throw new Exception("No bean with name '" + withName + "'  found.");
+    LOG.error("No definition found for class '" + clazz.getSimpleName() + "'.");
+    return null;
   }
 
   /**

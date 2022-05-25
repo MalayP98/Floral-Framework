@@ -54,7 +54,11 @@ public class FrameworkUtils {
     if (annotation == Controller.class)
       beanName = clazz.getAnnotation(Controller.class).name();
     if (beanName.equals(""))
-      return clazz.getSimpleName();
+      beanName = clazz.getSimpleName();
     return beanName;
+  }
+
+  public static Class<?> toClass(String className) throws ClassNotFoundException {
+    return Class.forName(className);
   }
 }
