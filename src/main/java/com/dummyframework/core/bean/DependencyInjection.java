@@ -73,6 +73,8 @@ public class DependencyInjection {
    */
   private <T extends Executable> Object[] createParameterBeans(T executable) throws Exception {
     Class<?>[] params = executable.getParameterTypes();
+    if (params.length == 0)
+      return null;
     Object[] objects = new Object[params.length];
     String[] beanNames = findBeanName(executable);
     for (int i = 0; i < params.length; i++) {

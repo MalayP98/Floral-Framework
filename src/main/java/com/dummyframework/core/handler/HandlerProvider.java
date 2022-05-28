@@ -53,6 +53,8 @@ public class HandlerProvider {
       } else if (parameters[i].isAnnotationPresent(QueryParameter.class)) {
         parameterObjects[i] = queryParameters.get(parameterNames.get(i));
       } else if (parameters[i].isAnnotationPresent(RequestBody.class) && !payloadCandidateFound) {
+        System.out.println(
+            "converting  " + request.getPayload() + " to " + handlerDetail.getPayload().toString());
         parameterObjects[i] = deserialize(handlerDetail.getPayload(), request.getPayload());
         payloadCandidateFound = true;
       }
@@ -76,7 +78,7 @@ public class HandlerProvider {
   }
 
   private Map<String, Object> getQueryParameters(Map<String, String> queryParameterValues,
-      Map<String, Class<?>> queryParameterType)
+      Map<String, Type> queryParameterType)
       throws ClassNotFoundException, ConverterException, ArrayBuilderException {
     Map<String, Object> queryParameterObjects = new HashMap<>();
     for (Map.Entry<String, String> queryParameterValue : queryParameterValues.entrySet()) {

@@ -3,7 +3,10 @@ package com.dummyframework.core.request;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
+import com.dummyframework.core.DefaultProperties;
+import com.dummyframework.core.Properties;
 import com.dummyframework.utils.RequestMethod;
 
 public class Request {
@@ -18,7 +21,6 @@ public class Request {
     this.payload = readPayload(request.getReader());
     this.method = RequestMethod.toRequestMethod(request.getMethod());
     resolveQueryParams(request.getQueryString());
-
   }
 
   private String readPayload(BufferedReader reader) throws IOException {
@@ -37,10 +39,15 @@ public class Request {
     } else {
       this.url = uri;
     }
+    url = removeAppName(url);
+  }
+
+  private String removeAppName(String url) {
+    return url.replace("/" + Properties.get(DefaultProperties.APP_NAME), "");
   }
 
   private void resolveQueryParams(String params) {
-    if (!params.isEmpty()) {
+    if (Objects.nonNull(params) && !params.isEmpty()) {
       String[] paramsArr = params.split("&");
       for (String param : paramsArr) {
         int i;
@@ -51,8 +58,6 @@ public class Request {
         }
         this.queryParams.put(param.substring(0, i), param.substring(i + 1));
       }
-    } else {
-      this.payload = "";
     }
   }
 

@@ -25,7 +25,7 @@ public class LoginController {
   @Autowired
   StandardOutput standardOutput;
 
-  @RequestMapping(value = "/app/login", method = RequestMethod.POST, produces = "application/json")
+  @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
   public String login(@RequestBody(tag = "loginForm") LoginForm loginForm) {
     String username = loginForm.getName();
     String password = loginForm.getPassword();

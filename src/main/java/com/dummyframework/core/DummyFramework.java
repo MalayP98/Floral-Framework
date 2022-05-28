@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import com.dummyframework.annotations.ComponentScan;
+import com.dummyframework.core.bean.BeanDefinition;
+import com.dummyframework.core.bean.BeanDefinitionRegistry;
 import com.dummyframework.core.bean.Reader;
 import com.dummyframework.exception.AppContextException;
 import com.dummyframework.exception.NoComponentScanException;

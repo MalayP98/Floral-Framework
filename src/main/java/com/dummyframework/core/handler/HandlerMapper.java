@@ -26,7 +26,6 @@ public class HandlerMapper {
         }
       }
     }
-    handlerRegistry.display();
   }
 
   private void mapHandlers(Class<?> clazz) {

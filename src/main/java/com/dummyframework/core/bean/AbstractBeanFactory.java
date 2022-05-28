@@ -108,7 +108,7 @@ public abstract class AbstractBeanFactory {
     if (beanDefinition.hasFactoryMethod()) {
       beanNames = createObjectWithFactoryMethod(beanDefinition.getFactoryMethods());
     }
-    if (beanDefinition.isComponent()) {
+    if (beanDefinition.isComponent() && !beanRegistry.hasBean(beanDefinition.getComponentName())) {
       String componentName = beanDefinition.getComponentName();
       if (beanDefinition.hasParameterizedConstructors()) {
         beanRegistry.add(componentName, createObjectWithParameterizedConstructor(
@@ -134,7 +134,6 @@ public abstract class AbstractBeanFactory {
         maxArgumentConstructor = parameterizedConstructor;
       }
     }
-
     Class<?>[] paramTypes = maxArgumentConstructor.getParameterTypes();
     for (Class<?> clazz : paramTypes) {
       if (!beanDefinitionRegistry.hasBeanDefinition(beanDefinitionRegistry.generateBeanName(clazz)))
@@ -153,15 +152,17 @@ public abstract class AbstractBeanFactory {
       Exception {
     List<String> beanNames = new ArrayList<>();
     for (Method factoryMethod : factoryMethods) {
-      Object parentBean = createBean(factoryMethod.getDeclaringClass(), "");
       String beanName = "";
       if (factoryMethod.isAnnotationPresent(BeanName.class)) {
         beanName = factoryMethod.getAnnotation(BeanName.class).name();
       } else {
         beanName = factoryMethod.getName();
       }
-      beanRegistry.add(beanName, factoryMethod.invoke(parentBean,
-          dependencyInjection.getMethodDependencies(factoryMethod)));
+      if (!beanRegistry.hasBean(beanName)) {
+        Object parentBean = createBean(factoryMethod.getDeclaringClass(), "");
+        beanRegistry.add(beanName, factoryMethod.invoke(parentBean,
+            dependencyInjection.getMethodDependencies(factoryMethod)));
+      }
       beanNames.add(beanName);
     }
     return beanNames;

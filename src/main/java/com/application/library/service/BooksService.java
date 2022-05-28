@@ -11,9 +11,12 @@ import java.util.List;
 import com.application.library.models.Book;
 import com.application.library.utils.Utils;
 import com.dummyframework.annotations.Service;
+import com.dummyframework.logger.Logger;
 
 @Service
 public class BooksService {
+
+  private Logger LOG = new Logger(getClass());
 
   public long addBook(Book book) {
     Connection connection = null;
@@ -43,7 +46,7 @@ public class BooksService {
           throw new SQLException();
       }
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      LOG.error(e.getMessage());
     }
 
     return id;

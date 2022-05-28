@@ -35,32 +35,4 @@ public class HandlerRegistry {
     }
     throw new Exception("No path '" + uri + "' exists.");
   }
-
-  public void display() {
-    for (Map.Entry<String, HandlerDetail> x : handleRegistry.entrySet()) {
-      System.out
-          .println(x.getKey() + " -> " + x.getValue().getHandler() + "#" + x.getValue().getUri());
-    }
-  }
-
-  // public void add(String url, String method, HandlerDetails details) {
-  // urlRegistry.put(generateKey(url, method), details);
-  // }
-
-  // public HandlerDetails get(String url, String method) {
-  // String key = generateKey(url, method);
-  // // throw error here.
-  // if (!urlRegistry.containsKey(key)) {
-  // return null;
-  // }
-  // return urlRegistry.get(key);
-  // }
-
-  // public HandlerDetails get(Request request) {
-  // return get(request.getUrl(), request.getMethod());
-  // }
-
-  // private String generateKey(String url, String method) {
-  // return url + "#" + method;
-  // }
 }

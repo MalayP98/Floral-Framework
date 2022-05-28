@@ -2,6 +2,7 @@ package com.dummyframework.core.handler;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +18,13 @@ public class HandlerDetail {
 
   private String uri;
 
-  private Map<String, Class<?>> pathVariables = new HashMap<>();
+  private Map<String, Type> pathVariables = new HashMap<>();
 
-  private Map<String, Class<?>> queryParameters = new HashMap<>();
+  private Map<String, Type> queryParameters = new HashMap<>();
 
   private List<String> parameterNames = new ArrayList<>();
 
-  private Class<?> payload = null;
+  private Type payload = null;
 
   private boolean sendResponse = false;
 
@@ -52,15 +53,15 @@ public class HandlerDetail {
       String paramName = parameter.getName();
       if (parameter.isAnnotationPresent(PathVariable.class)) {
         PathVariable pathVariable = parameter.getAnnotation(PathVariable.class);
-        pathVariables.put(pathVariable.name(), parameter.getType());
+        pathVariables.put(pathVariable.name(), parameter.getParameterizedType());
         paramName = pathVariable.name();
       } else if (parameter.isAnnotationPresent(QueryParameter.class)) {
         QueryParameter queryParameter = parameter.getAnnotation(QueryParameter.class);
-        queryParameters.put(queryParameter.name(), parameter.getType());
+        queryParameters.put(queryParameter.name(), parameter.getParameterizedType());
         paramName = queryParameter.name();
       } else if (parameter.isAnnotationPresent(RequestBody.class)) {
         if (payload == null)
-          payload = parameter.getType();
+          payload = parameter.getParameterizedType();
       }
       parameterNames.add(paramName);
     }
@@ -72,15 +73,15 @@ public class HandlerDetail {
             || parentClass().isAnnotationPresent(ResponseBody.class)));
   }
 
-  public Map<String, Class<?>> getPathVariables() {
+  public Map<String, Type> getPathVariables() {
     return pathVariables;
   }
 
-  public Map<String, Class<?>> getQueryParameters() {
+  public Map<String, Type> getQueryParameters() {
     return queryParameters;
   }
 
-  public Class<?> getPayload() {
+  public Type getPayload() {
     return payload;
   }
 

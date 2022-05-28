@@ -12,7 +12,7 @@ import com.dummyframework.utils.RequestMethod;
 @Controller
 public class NewController {
 
-  @RequestMapping(value = "/app/some/{id1}", method = RequestMethod.GET, produces = "text/plain")
+  @RequestMapping(value = "/some/{id1}", method = RequestMethod.GET, produces = "text/plain")
   @ResponseBody
   public String add(@PathVariable(name = "id1") int id1, @QueryParameter(name = "x") int x,
       @RequestBody LoginForm form1, @RequestBody LoginForm form2) {
