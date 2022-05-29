@@ -4,9 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import com.application.library.LibrarySystem;
-import com.dummyframework.exception.AppContextException;
-
 public class DefaultServletContextListner implements ServletContextListener {
 
   @Override
