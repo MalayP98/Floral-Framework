@@ -18,12 +18,16 @@ public class HandlerDetail {
 
   private String uri;
 
+  // maps all the path variables names with the type of paramter.
   private Map<String, Type> pathVariables = new HashMap<>();
 
+  // maps all the query parameter names with type of query parameter.
   private Map<String, Type> queryParameters = new HashMap<>();
 
+  // keeps name of all the parameter as java sotres the names as argN.
   private List<String> parameterNames = new ArrayList<>();
 
+  // type of @RequestBody parameter.
   private Type payload = null;
 
   private boolean sendResponse = false;
@@ -47,6 +51,20 @@ public class HandlerDetail {
     return this.sendResponse;
   }
 
+  /**
+   * Extracts names of parameter from the annotations like @PathVariable, @QueryParameter and map
+   * them to the respsective type of parameter. Also store the names in parameterName list.
+   * 
+   * For payload type parameter, if multiple such parameters are present for example,
+   * 
+   * <pre>
+   * public String handler(@RequestBody List<String> param1, @RequestBody int param2,....){ //function 
+   * }
+   * </pre>
+   * 
+   * The first parameter will always be chosen. For this example 'param1' will be used to map the
+   * payload.
+   */
   private void resolveHandlerParameters() {
     Parameter[] parameters = handler.getParameters();
     for (Parameter parameter : parameters) {
@@ -67,6 +85,11 @@ public class HandlerDetail {
     }
   }
 
+  /**
+   * Decides wether this handler can write output in the response. It can only write the response
+   * only when the method can return something and @RequestBody annotation is present on the method
+   * or @RequestBody annotation is present on the parent class.
+   */
   private void setSendResponse() {
     sendResponse =
         (handler.getReturnType() != Void.class && (handler.isAnnotationPresent(ResponseBody.class)

@@ -17,18 +17,34 @@ public class HandlerMapper {
 
   private static HandlerRegistry handlerRegistry = HandlerRegistry.getInstance();
 
+  /**
+   * Takes a list of classes and get bean definition for that class. From that bean definition
+   * checks if the bean is a controller. If bean is a controller then map the methods in that class
+   * to the request.
+   * 
+   * @param classes : checking every class if it is a controller or not.
+   */
   public void map(List<Class<?>> classes) {
     for (Class<?> clazz : classes) {
       if (beanDefinitionRegistry.hasBeanDefinition(clazz)) {
         BeanDefinition definition = beanDefinitionRegistry.getBeanDefinition(clazz);
         if (FrameworkUtils.isControllerBean(definition.getBeanType())) {
-          mapHandlers(clazz);
+          mapHandlerToRequest(clazz);
         }
       }
     }
   }
 
-  private void mapHandlers(Class<?> clazz) {
+  /**
+   * Gets all the methods of a class. For every method checks if that method is mapped to some
+   * request or not. If it is mapped to a request then the request path is added to the Path class.
+   * A key is created which is then mapped to a Handler object.
+   * 
+   * Key : path returned from Path object + "#" + the method type (like, GET, POST,....)
+   * 
+   * Value : Handler object which takes handler and path as parameter.
+   */
+  private void mapHandlerToRequest(Class<?> clazz) {
     Method[] methods = clazz.getMethods();
     for (Method method : methods) {
       if (method.isAnnotationPresent(RequestMapping.class)) {

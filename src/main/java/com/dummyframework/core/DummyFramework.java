@@ -35,6 +35,7 @@ public class DummyFramework {
       throws IOException, NoComponentScanException, ClassNotFoundException,
       IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException,
       InstantiationException, InvocationTargetException, AppContextException {
+    Properties.set(DefaultProperties.MAIN_CLASS_NAME, clazz.getName());
     printBanner();
     List<Class<?>> scannedClasses = new ArrayList<>(scanClasses(clazz));
     reader.register(scannedClasses);
@@ -92,6 +93,4 @@ public class DummyFramework {
       LOG.error("No file found by name \"banner.txt\"");
     }
   }
-
-
 }
