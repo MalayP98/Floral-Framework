@@ -1,7 +1,7 @@
-# Dummy-Framework
-### DummyFramework closely replicate Spring MVC Framework and Dependency Injection.
+# Floral-Framework
+### FloralFramework closely replicate Spring MVC Framework and Dependency Injection.
 
-DummyFramework might or might not achive MVC and Dependency Injection the Spring way but overall idea is the same. 
+FloralFramework might or might not achive MVC and Dependency Injection the Spring way but overall idea is the same. 
 
 ## 1. How it works.
 
